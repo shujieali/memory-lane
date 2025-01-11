@@ -91,7 +91,39 @@
    - Issue templates for bugs and feature requests
    - Automated code ownership via CODEOWNERS
 
-4. VSCode Integration
+4. Commit Guidelines
+
+   Using commitlint with conventional commits standard:
+
+   - Format: `type(scope?): subject`
+   - Types:
+     - `feat`: New features
+     - `fix`: Bug fixes
+     - `docs`: Documentation changes
+     - `style`: Code style changes (formatting, etc.)
+     - `refactor`: Code refactoring
+     - `test`: Adding or modifying tests
+     - `chore`: Maintenance tasks
+   - Example commits:
+     ```bash
+     feat: add user authentication
+     fix(api): handle timeout errors
+     docs: update README
+     style: format code
+     ```
+
+5. Pre-commit Workflow
+
+   Using husky and lint-staged:
+
+   - Automatically runs on `git commit`
+   - Lints and formats staged files:
+     - ESLint for `.ts`/`.tsx` files
+     - Prettier for `.js`, `.jsx`, `.ts`, `.tsx`, `.json`, `.css`, `.md`
+   - Validates commit messages using commitlint
+   - CI-safe with `is-ci` integration
+
+6. VSCode Integration
 
    - Consistent editor settings via .vscode/settings.json
    - Recommended extensions in .vscode/extensions.json:
@@ -101,14 +133,15 @@
      - TypeScript support (Pretty TS Errors)
      - Code review tools (Color Highlight, TODO Highlight)
 
-5. Continuous Integration
+7. Continuous Integration
 
    - GitHub Actions workflow runs on push to main and pull requests
    - Automated steps:
      - Dependency installation
      - Linting
+     - PR title validation (conventional commits)
 
-6. Package Versions
+8. Package Versions
 
    - React 19.0.0
    - Vite 6.0.7
@@ -116,8 +149,12 @@
    - TypeScript ESLint 8.19.1
    - Express 4.21.2
    - SQLite3 5.1.7
+   - Husky 9.1.7
+   - Commitlint 19.6.1
+   - Lint-staged 15.3.0
+   - Prettier 3.4.2
 
-7. Database
+9. Database
    - SQLite for development
    - Auto-creates database file when needed
    - Migrations handled through API initialization
