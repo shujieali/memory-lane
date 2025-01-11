@@ -1,6 +1,6 @@
 # Technical Decisions Log
 
-## Module System Organization (2023-08-XX)
+## Module System Organization (2025-01-11)
 
 ### Context
 The project needed clear separation between frontend and backend module systems while maintaining proper tooling configuration.
@@ -27,7 +27,7 @@ The project needed clear separation between frontend and backend module systems 
 - Better alignment with ecosystem standards
 - Easier onboarding for new developers
 
-## Development Workflow Enhancement (2023-08-XX)
+## Development Workflow Enhancement (2025-01-11)
 
 ### Context
 Need to run both frontend and backend servers during development.
@@ -48,7 +48,7 @@ Need to run both frontend and backend servers during development.
 - Proper linting for each environment
 - Better developer experience
 
-## Project Structure (2023-08-XX)
+## Project Structure (2025-01-11)
 
 ### Context
 Need to organize project files and documentation for clarity and maintainability.
