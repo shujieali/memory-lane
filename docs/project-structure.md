@@ -4,117 +4,134 @@
 
 The project is organized into two main parts:
 
-- Frontend (src/): React 19/TypeScript application using Vite 6
-- Backend (server/): Express/Node.js API with SQLite database
+- Frontend (src/): React 19/TypeScript application using Vite 6 and Material-UI
+- Backend (server/): Express/Node.js API with SQLite database and JWT authentication
 
 ## Directory Structure
 
 ```
 memory-lane/
 ├── src/                    # Frontend source code (ES Modules)
-│   ├── assets/             # Static assets
-│   ├── App.tsx             # Main React component
-│   └── main.tsx            # Application entry point
-├── server/                 # Backend source code (CommonJS)
-│   ├── api.js              # Express API implementation
-│   └── package.json        # Backend-specific dependencies
-├── public/                 # Public static files
-├── docs/                   # Project documentation
-├── .github/                # GitHub configuration
-│   ├── workflows/          # GitHub Actions workflows
-│   └── ISSUE_TEMPLATE/     # Issue and PR templates
-├── .husky/                 # Git hooks configuration
-│   ├── pre-commit          # Pre-commit hook for linting
-│   └── commit-msg          # Commit message validation
-├── .vscode/                # VSCode configuration
-├── .editorconfig           # Editor configuration
-├── .eslintrc.mjs           # Frontend ESLint config (ES Modules)
-├── .eslintrc.cjs           # Backend ESLint config (CommonJS)
-├── .nvmrc                  # Node.js version specification
-├── .prettierrc             # Prettier configuration
-├── .tool-versions          # ASDF version manager config
-├── commitlint.config.mjs   # Commitlint configuration
-├── vite.config.mjs         # Vite build configuration
-├── tailwind.config.js      # Tailwind CSS configuration
-├── tsconfig.json           # TypeScript configuration
-└── package.json            # Project dependencies and scripts
+│   ├── assets/            # Static assets
+│   ├── components/        # Reusable React components
+│   │   ├── MemoryCard     # Memory card component with image loading
+│   │   └── DeleteConfirmDialog # Confirmation dialog for deletions
+│   ├── context/          # React Context providers
+│   │   ├── AuthContext   # Authentication state management
+│   │   └── SettingsContext # User preferences management
+│   ├── layouts/          # Layout components
+│   │   └── MainLayout    # Main app layout with responsive drawer
+│   ├── pages/            # Page components
+│   │   ├── Dashboard     # Main dashboard view
+│   │   ├── Memories      # Memories view
+│   │   ├── Settings      # User settings
+│   │   ├── Login         # Login page
+│   │   └── Signup        # Registration page
+│   ├── services/         # API service layer
+│   │   ├── api          # Memory CRUD operations
+│   │   └── auth         # Authentication services
+│   ├── theme/           # Theme configuration
+│   ├── types/           # TypeScript type definitions
+│   ├── utils/           # Utility functions
+│   ├── App.tsx          # Main React component
+│   └── main.tsx         # Application entry point
+├── server/              # Backend source code (CommonJS)
+│   ├── api.js           # Express API with JWT auth
+│   └── package.json     # Backend-specific dependencies
+├── public/              # Public static files
+├── docs/               # Project documentation
+├── .env               # Environment configuration
+└── [Other config files]
 ```
 
-## Key Files
+## Key Features
 
-### Configuration
+### Frontend
 
-- `.eslintrc.mjs`: Frontend ESLint configuration using flat config system
-- `.eslintrc.cjs`: Backend ESLint configuration using flat config system
-- `vite.config.mjs`: Vite 6 build configuration using ES modules
-- `tailwind.config.js`: Tailwind CSS configuration
-- `tsconfig.json`: TypeScript configuration for frontend
-- `package.json`: Project dependencies, scripts, and workspace configuration
-- `.prettierrc`: Code formatting rules
-- `.editorconfig`: Basic editor settings
-- `commitlint.config.mjs`: Conventional commit rules
-- `.nvmrc` & `.tool-versions`: Node.js version management
+- **Authentication**:
 
-### Git Hooks and CI
+  - JWT-based authentication
+  - Protected routes
+  - Login/Signup flows
 
-- `.husky/`: Git hooks for code quality
-  - `pre-commit`: Runs lint-staged for code formatting
-  - `commit-msg`: Validates commit messages
-- `.github/workflows/`: CI/CD pipelines
-  - Lint checks
-  - PR title validation
-  - Build verification
+- **Memory Management**:
 
-### Source Code
+  - Create, read, update, delete memories
+  - Image loading states
+  - Favorite memories
+  - Tags support
+  - Responsive grid layout
 
-- `src/`: Frontend React 19 application
+- **User Interface**:
 
-  - `main.tsx`: Application entry point
-  - `App.tsx`: Main React component
-  - `assets/`: Static assets for frontend
+  - Material-UI v6 components
+  - Responsive sidebar navigation
+  - Light/Dark theme switching
+  - Compact view mode
+  - Customizable grid layout
+  - Show/hide dates and tags
 
-- `server/`: Backend Express API
-  - `api.js`: Main server implementation
-  - `package.json`: Backend-specific configurations
+- **Settings**:
+  - Theme preferences
+  - Display settings
+  - Layout customization
+  - Persistent settings storage
 
-### Documentation
+### Backend
 
-- `docs/`: Project documentation
-  - `project-structure.md`: This file
-  - `module-systems.md`: Module system configuration details
-  - `development-workflow.md`: Development setup and practices
-  - `technical-decisions.md`: Architecture and technical decisions
-  - `assessment.md`: Original project requirements
+- **Security**:
 
-## Module System Organization
+  - JWT authentication
+  - Password hashing with salt
+  - Rate limiting
+  - CORS configuration
+  - Input validation
+  - User ownership verification
 
-- Frontend (src/): Uses ES Modules
-  - TypeScript/React code
-  - Configuration files in .mjs format
-- Backend (server/): Uses CommonJS
-  - Node.js/Express code
-  - Configuration files in .cjs format
+- **Database**:
 
-## Development Tools
+  - SQLite with foreign key constraints
+  - Indexed queries
+  - Transaction support
+  - Proper error handling
+
+- **API Features**:
+  - RESTful endpoints
+  - Memory CRUD operations
+  - User authentication
+  - Tag management
+  - Favorites system
+
+## Configuration
+
+### Environment Variables (.env)
+
+```
+PORT=4001                 # Server port
+JWT_SECRET=xxx           # JWT signing key
+CORS_ORIGIN=xxx         # Allowed frontend origin
+DB_PATH=memories.db     # SQLite database path
+```
+
+### Development Tools
 
 - **Code Quality**:
 
   - ESLint 9 with flat config
   - Prettier for formatting
   - TypeScript for type safety
-  - EditorConfig for basic editor settings
+  - Jest and React Testing Library
 
-- **Git Workflow**:
+- **State Management**:
 
-  - Husky for Git hooks
-  - Lint-staged for pre-commit checks
-  - Commitlint for commit message validation
-  - GitHub Actions for CI/CD
+  - React Context for auth and settings
+  - Local storage persistence
+  - JWT token management
 
 - **Build Tools**:
   - Vite 6 for frontend
   - TypeScript compiler
-  - Tailwind CSS for styling
+  - Material-UI for styling
 
 ## Requirements
 
@@ -122,4 +139,24 @@ memory-lane/
   - Vite 6 compatibility
   - ESLint 9 flat config
   - Modern JavaScript features
-  - Husky 9 and newer tooling
+  - Material-UI v6
+
+## Development Setup
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Create .env file with required variables
+
+3. Start development servers:
+
+   ```bash
+   npm run dev
+   ```
+
+4. Access the application:
+   - Frontend: http://localhost:5173
+   - Backend: http://localhost:4001

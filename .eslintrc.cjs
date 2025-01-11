@@ -1,24 +1,30 @@
-const js = require('@eslint/js');
-
-module.exports = [{
-  files: ['**/*.js'],
-  languageOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'commonjs',
-    globals: {
-      ...js.configs.recommended.globals,
-      __dirname: 'readonly',
-      __filename: 'readonly',
-      process: 'readonly',
-      module: 'readonly',
-      require: 'readonly',
-      exports: 'writable',
-      console: 'readonly',
+module.exports = [
+  {
+    ignores: ['dist/**'],
+  },
+  {
+    files: ['**/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        __dirname: 'readonly',
+      },
+    },
+    rules: {
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-var': 'error',
+      'prefer-const': 'error',
+      'no-multiple-empty-lines': ['error', { max: 1 }],
+      'no-trailing-spaces': 'error',
+      semi: ['error', 'never'],
+      quotes: ['error', 'single', { avoidEscape: true }],
+      'comma-dangle': ['error', 'always-multiline'],
     },
   },
-  rules: {
-    ...js.configs.recommended.rules,
-    'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-    'no-console': ['warn', { allow: ['info', 'error', 'log'] }],
-  },
-}];
+]

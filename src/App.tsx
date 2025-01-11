@@ -1,23 +1,93 @@
-import { CubeIcon } from '@heroicons/react/20/solid'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from './context/AuthContext'
+import { SettingsProvider } from './context/SettingsContext'
+import MainLayout from './layouts/MainLayout'
+import Login from './pages/Login'
+import Signup from './pages/Signup'
+import Dashboard from './pages/Dashboard'
+import Settings from './pages/Settings'
+import Memories from './pages/Memories'
 
-function App() {
+function PrivateRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth()
+  return isAuthenticated ? <>{children}</> : <Navigate to='/login' />
+}
+
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { isAuthenticated } = useAuth()
+  return !isAuthenticated ? <>{children}</> : <Navigate to='/dashboard' />
+}
+
+function AppRoutes() {
   return (
-    <div>
-      <div className='mx-auto max-w-7xl sm:px-6 lg:px-8 mt-32'>
-        <div className='overflow-hidden rounded-lg bg-white shadow h-96'>
-          <div className='px-4 py-5 sm:p-6'>
-            <div className='flex items-center'>
-              <CubeIcon className='h-16 w-16 inline-block' />
-              <h1 className='text-4xl font-semibold text-gray-900 mb-4 ml-4 mt-4'>
-                Memory lane
-              </h1>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Routes>
+      <Route
+        path='/login'
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path='/signup'
+        element={
+          <PublicRoute>
+            <Signup />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path='/dashboard'
+        element={
+          <PrivateRoute>
+            <MainLayout>
+              <Dashboard />
+            </MainLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path='/settings'
+        element={
+          <PrivateRoute>
+            <MainLayout>
+              <Settings />
+            </MainLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path='/memories'
+        element={
+          <PrivateRoute>
+            <MainLayout>
+              <Memories />
+            </MainLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path='/'
+        element={
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        }
+      />
+      <Route path='*' element={<Navigate to='/' replace />} />
+    </Routes>
   )
 }
 
-export default App
+export default function App() {
+  return (
+    <BrowserRouter>
+      <SettingsProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </SettingsProvider>
+    </BrowserRouter>
+  )
+}
