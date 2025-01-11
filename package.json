@@ -10,7 +10,8 @@
     "lint": "npm run lint:frontend && npm run lint:backend",
     "lint:frontend": "eslint \"src/**/*.{ts,tsx}\" -c .eslintrc.mjs --max-warnings 0",
     "lint:backend": "eslint \"server/**/*.{js,ts}\" -c .eslintrc.cjs --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -20,6 +21,8 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
     "@types/react": "^19.0.4",
     "@types/react-dom": "^19.0.2",
     "@typescript-eslint/eslint-plugin": "^8.19.1",
@@ -29,10 +32,18 @@
     "eslint": "^9.18.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.16",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.3.0",
     "nodemon": "^3.1.9",
     "postcss": "^8.4.49",
+    "prettier": "^3.4.2",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
     "vite": "^6.0.7"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": "eslint --fix -c .eslintrc.mjs",
+    "server/**/*.{js,ts}": "eslint --fix -c .eslintrc.cjs",
+    "*.{js,jsx,ts,tsx,json,css,md}": "prettier --write"
   }
 }

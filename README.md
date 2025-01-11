@@ -4,24 +4,35 @@ A web application that allows users to create and share their memories in a chro
 
 ## Prerequisites
 
-- Node.js 20 or higher (required for Vite 6 and ESLint 9)
+- Node.js 20.18.0 (version managed via .nvmrc and .tool-versions)
 - npm 8 or higher
 
 ## Documentation
 
 - [Project Structure](docs/project-structure.md) - Directory organization and key files
 - [Module Systems](docs/module-systems.md) - Frontend/Backend module system configuration
-- [Development Workflow](docs/development-workflow.md) - Setup, scripts, and development practices
+- [Development Workflow](docs/development-workflow.md) - Setup, tooling, and development practices
 - [Technical Decisions](docs/technical-decisions.md) - Log of architectural and technical decisions
+
+## Development Tools
+
+- Version Management: NVM and ASDF support
+- Code Quality: ESLint, Prettier, EditorConfig
+- Git Workflow: Husky, Commitlint, Lint-staged
+- CI/CD: GitHub Actions for linting and testing
+- VSCode: Configured settings and recommended extensions
+- Templates: PR, Issue, and Bug report templates
 
 ## Quick Start
 
 1. Ensure correct Node.js version:
+
    ```bash
    node --version  # Should be v20+
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -48,6 +59,7 @@ Memory Lane helps users share their memories with friends and family in a single
 ## Technical Stack
 
 - Frontend:
+
   - React 19 with TypeScript
   - Vite 6 for build tooling
   - Tailwind CSS for styling

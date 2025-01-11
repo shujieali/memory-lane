@@ -1,0 +1,27 @@
+# These owners will be the default owners for everything in
+# the repo. Unless a later match takes precedence,
+# they will be requested for review when someone opens a pull request.
+*       @shujieali
+
+# Frontend code
+/src/           @shujieali
+*.tsx           @shujieali
+*.ts            @shujieali
+
+# Backend code
+/server/        @shujieali
+
+# Configuration files
+*.json          @shujieali
+*.config.*      @shujieali
+
+# Documentation
+/docs/          @shujieali
+*.md            @shujieali
+
+# GitHub specific files
+/.github/       @shujieali
+
+# Build and deployment
+/scripts/       @shujieali
+*.yml           @shujieali
