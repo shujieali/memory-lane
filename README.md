@@ -2,6 +2,11 @@
 
 A web application that allows users to create and share their memories in a chronological timeline.
 
+## Prerequisites
+
+- Node.js 20 or higher (required for Vite 6 and ESLint 9)
+- npm 8 or higher
+
 ## Documentation
 
 - [Project Structure](docs/project-structure.md) - Directory organization and key files
@@ -11,12 +16,17 @@ A web application that allows users to create and share their memories in a chro
 
 ## Quick Start
 
-1. Install dependencies:
+1. Ensure correct Node.js version:
+   ```bash
+   node --version  # Should be v20+
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start development servers:
+3. Start development servers:
    ```bash
    npm run dev
    ```
@@ -38,15 +48,27 @@ Memory Lane helps users share their memories with friends and family in a single
 ## Technical Stack
 
 - Frontend:
-  - React with TypeScript
-  - Vite for build tooling
+  - React 19 with TypeScript
+  - Vite 6 for build tooling
   - Tailwind CSS for styling
   - ES Modules
+  - ESLint 9 with TypeScript/React rules
 
 - Backend:
-  - Node.js with Express
-  - SQLite database
+  - Node.js with Express 4.21
+  - SQLite 5.1 database
   - CommonJS modules
+  - ESLint 9 with Node.js rules
+
+## Configuration
+
+- ESLint:
+  - `.eslintrc.mjs` - Frontend TypeScript/React rules
+  - `.eslintrc.cjs` - Backend Node.js rules
+- Build Tools:
+  - `vite.config.mjs` - Vite configuration
+  - `tailwind.config.js` - Tailwind CSS configuration
+  - `tsconfig.json` - TypeScript configuration
 
 ## Original Requirements
 
