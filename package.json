@@ -11,7 +11,7 @@
     "lint:frontend": "eslint \"src/**/*.{ts,tsx}\" -c .eslintrc.mjs --max-warnings 0",
     "lint:backend": "eslint \"server/**/*.{js,ts}\" -c .eslintrc.cjs --max-warnings 0",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -33,6 +33,7 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "husky": "^9.1.7",
+    "is-ci": "^4.1.0",
     "lint-staged": "^15.3.0",
     "nodemon": "^3.1.9",
     "postcss": "^8.4.49",
