@@ -1,28 +1,55 @@
-# Planned coding challenge: Memory lane
+# Memory Lane
 
-**Please avoid initiating pull requests on this repository or forking this repository. To submit your solution, either set up a repository on your own account or forward a zip file to the appropriate contact within our talent team.**
+A web application that allows users to create and share their memories in a chronological timeline.
 
-### Problem definition
+## Documentation
 
-After a series of discovery calls we found out a problem that our users are facing. They are having a hard time sharing their memories with friends and family. They are using a combination of social media, messaging apps, and email to share their memories. They are looking for a solution that allows them to store and share their memories in a single place.
+- [Project Structure](docs/project-structure.md) - Directory organization and key files
+- [Module Systems](docs/module-systems.md) - Frontend/Backend module system configuration
+- [Development Workflow](docs/development-workflow.md) - Setup, scripts, and development practices
+- [Technical Decisions](docs/technical-decisions.md) - Log of architectural and technical decisions
 
-As a first iteration for this solution, we want to build a web application that allows users to create a memory lane and share it with friends and family. A memory lane is a collection of events that happened in a chronological order. Each event consists of a title, a description, a timestamp, and at least one image.
+## Quick Start
 
-## Deliverables
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-- Clone this repository and create a new branch with your name. Open a pull request on your own instance of the repository.
-- An updated README providing a high level explanation of your implementation.
-- **Screenshots or a short video/gif** showing your UI implementation.
-- Update the API to accommodate for your technical design. Run the API by using `npm run serve:api`.
-- The provided mockup is only for reference and inspiration. Feel free to improve it!
+2. Start development servers:
+   ```bash
+   npm run dev
+   ```
+   - Frontend: http://localhost:5173
+   - Backend: http://localhost:4001
 
-### FAQ
+## Project Overview
 
-- **Can I add a framework like Next?** If you have the time, go for it, we want to see you use your favorite tools.
-- **Is user authentication required?** No, it is not required.
-- **Can I use a component library?** Yes, you can use a component library.
-- **What will you be looking for?** Good user experience, reusable code, and a well thought out technical design.
+Memory Lane helps users share their memories with friends and family in a single place. Features include:
 
-### Inspiration mockup
+- Chronological timeline of events
+- Each memory includes:
+  - Title
+  - Description
+  - Timestamp
+  - Image(s)
+- Simple sharing mechanism
+
+## Technical Stack
+
+- Frontend:
+  - React with TypeScript
+  - Vite for build tooling
+  - Tailwind CSS for styling
+  - ES Modules
+
+- Backend:
+  - Node.js with Express
+  - SQLite database
+  - CommonJS modules
+
+## Original Requirements
 
 ![Memory lane mockup](./memory_lane.png)
+
+For the original job assessment requirements and mockup, see [Job Assessment Details](docs/assessment.md).
