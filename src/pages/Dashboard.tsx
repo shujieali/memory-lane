@@ -18,9 +18,8 @@ import {
   Stack,
 } from '@mui/material'
 import { Add, LocalOffer } from '@mui/icons-material'
-import { useAuth } from '../context/AuthContext'
-import { useSettings } from '../context/SettingsContext'
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../hooks'
+import { useSettings } from '../hooks'
 import { useState, useEffect, KeyboardEvent } from 'react'
 import { api } from '../services/api'
 import MemoryCard from '../components/MemoryCard'
@@ -35,9 +34,8 @@ const emptyMemory = {
 }
 
 export default function Dashboard() {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const { settings } = useSettings()
-  const navigate = useNavigate()
   const [memories, setMemories] = useState<Memory[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -50,15 +48,6 @@ export default function Dashboard() {
   const [deleteMemory, setDeleteMemory] = useState<Memory | null>(null)
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState('')
-
-  const handleLogout = async () => {
-    try {
-      await logout()
-      navigate('/login')
-    } catch (error) {
-      console.error('Failed to log out:', error)
-    }
-  }
 
   const handleOpenDialog = (memory?: Memory) => {
     if (memory) {
@@ -223,12 +212,8 @@ export default function Dashboard() {
               variant='contained'
               startIcon={<Add />}
               onClick={() => handleOpenDialog()}
-              sx={{ mr: 2 }}
             >
               Add Memory
-            </Button>
-            <Button variant='outlined' onClick={handleLogout}>
-              Logout
             </Button>
           </Box>
         </Box>

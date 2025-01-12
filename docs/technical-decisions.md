@@ -1,5 +1,41 @@
 # Technical Decisions Log
 
+## Code Organization and Linting Improvements (2025-01-16)
+
+### Context
+
+Need to improve code organization and fix linting issues across the codebase.
+
+### Decisions
+
+1. Context and Hooks Organization:
+
+   - Separated context definitions into dedicated contexts.ts file
+   - Moved hooks into separate hooks/ directory
+   - Created index.ts for centralized hook exports
+   - Reason: Better separation of concerns and improved maintainability
+
+2. ESLint Configuration Updates:
+
+   - Allowed console usage in server code
+   - Added exception for unused catch parameters
+   - Configured proper handling of unused variables
+   - Reason: Better error handling and logging capabilities while maintaining code quality
+
+3. Import Path Standardization:
+
+   - Updated all context imports to use hooks directory
+   - Standardized import paths across components
+   - Reason: More consistent and maintainable import structure
+
+### Consequences
+
+- Cleaner code organization
+- Better separation of concerns
+- More maintainable codebase
+- Improved error handling capabilities
+- Consistent import patterns
+
 ## Authentication and Security Implementation (2025-01-15)
 
 ### Context

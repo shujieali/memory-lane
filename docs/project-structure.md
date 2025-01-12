@@ -16,9 +16,13 @@ memory-lane/
 │   ├── components/        # Reusable React components
 │   │   ├── MemoryCard     # Memory card component with image loading
 │   │   └── DeleteConfirmDialog # Confirmation dialog for deletions
-│   ├── context/          # React Context providers
+│   ├── context/          # React Context providers and definitions
+│   │   ├── contexts      # Shared context definitions
 │   │   ├── AuthContext   # Authentication state management
 │   │   └── SettingsContext # User preferences management
+│   ├── hooks/           # Custom React hooks
+│   │   ├── useAuth      # Authentication hook
+│   │   └── useSettings  # Settings management hook
 │   ├── layouts/          # Layout components
 │   │   └── MainLayout    # Main app layout with responsive drawer
 │   ├── pages/            # Page components

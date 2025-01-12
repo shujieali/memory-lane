@@ -1,9 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider, useAuth } from './context/AuthContext'
+import { AuthProvider } from './context/AuthContext'
+import { useAuth } from './hooks'
 import { SettingsProvider } from './context/SettingsContext'
 import MainLayout from './layouts/MainLayout'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
 import Memories from './pages/Memories'
@@ -15,7 +17,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 function PublicRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth()
-  return !isAuthenticated ? <>{children}</> : <Navigate to='/dashboard' />
+  return !isAuthenticated ? <>{children}</> : <Navigate to='/home' />
 }
 
 function AppRoutes() {
@@ -35,6 +37,16 @@ function AppRoutes() {
           <PublicRoute>
             <Signup />
           </PublicRoute>
+        }
+      />
+      <Route
+        path='/home'
+        element={
+          <PrivateRoute>
+            <MainLayout>
+              <Home />
+            </MainLayout>
+          </PrivateRoute>
         }
       />
       <Route

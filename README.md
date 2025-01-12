@@ -17,6 +17,8 @@ A web application that allows users to create, manage, and organize their memori
   - Mark memories as favorites
   - Image loading with skeleton states
   - Responsive grid layout
+  - Surprise memories on home page
+  - Chronological timeline view
 
 - **User Interface**:
 
@@ -83,7 +85,8 @@ A web application that allows users to create, manage, and organize their memori
 - Material-UI v6 for components
 - Vite 6 for build tooling
 - React Router v7 for navigation
-- React Context for state management
+- React Context with custom hooks
+- Centralized context definitions
 - Jest and React Testing Library
 
 ### Backend
@@ -100,6 +103,9 @@ A web application that allows users to create, manage, and organize their memori
 - **Code Quality**:
 
   - ESLint 9 with flat config
+  - Separate frontend/backend ESLint rules
+  - Console usage allowed in server code
+  - Proper error handling configuration
   - Prettier for formatting
   - TypeScript for type safety
   - EditorConfig for consistency
@@ -133,6 +139,9 @@ DB_PATH=memories.db    # SQLite database path
 ```
 memory-lane/
 ├── src/              # Frontend React/TypeScript
+│   ├── context/     # Context providers and definitions
+│   ├── hooks/       # Custom React hooks
+│   └── ...          # Other frontend directories
 ├── server/           # Backend Express/Node.js
 ├── docs/            # Documentation
 └── [config files]   # Configuration files

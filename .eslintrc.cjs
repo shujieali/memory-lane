@@ -16,8 +16,11 @@ module.exports = [
       },
     },
     rules: {
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-console': ['error', { allow: ['log', 'warn', 'error'] }],
+      'no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', caughtErrors: 'none' },
+      ],
       'no-var': 'error',
       'prefer-const': 'error',
       'no-multiple-empty-lines': ['error', { max: 1 }],

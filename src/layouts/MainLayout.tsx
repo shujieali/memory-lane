@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, Suspense, MouseEvent } from 'react'
 import {
   AppBar,
   Box,
@@ -13,38 +13,63 @@ import {
   ListItemIcon,
   ListItemText,
   ListItemButton,
-  Divider,
+  LinearProgress,
+  Menu,
+  MenuItem,
+  Avatar,
 } from '@mui/material'
 import {
-  Brightness4,
-  Brightness7,
   Menu as MenuIcon,
+  Home,
   Dashboard,
   Settings,
   PhotoLibrary,
 } from '@mui/icons-material'
-import { useSettings } from '../context/SettingsContext'
+import { useSettings } from '../hooks'
 import { createAppTheme } from '../theme/theme'
 import { useNavigate, useLocation } from 'react-router-dom'
+import FadeTransition from '../components/FadeTransition'
+import { useAuth } from '../hooks'
 
 interface MainLayoutProps {
   children: ReactNode
 }
 
-const drawerWidth = 240
+const drawerWidth = 220
 
 const menuItems = [
-  { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
+  { text: 'Home', icon: <Home />, path: '/home' },
   { text: 'Memories', icon: <PhotoLibrary />, path: '/memories' },
+  { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
   { text: 'Settings', icon: <Settings />, path: '/settings' },
 ]
 
 export default function MainLayout({ children }: MainLayoutProps) {
   const { settings, updateSettings } = useSettings()
+  const { user, logout } = useAuth()
   const theme = createAppTheme(settings.theme.mode)
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+
+  const handleMenu = (event: MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null)
+  }
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/login')
+    } catch (error) {
+      console.error('Failed to log out:', error)
+    }
+    handleCloseMenu()
+  }
 
   const toggleDrawer = () => {
     updateSettings({
@@ -54,22 +79,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
     })
   }
 
-  const toggleTheme = () => {
-    updateSettings({
-      theme: {
-        mode: settings.theme.mode === 'light' ? 'dark' : 'light',
-      },
-    })
-  }
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
   }
 
   const drawer = (
-    <Box>
-      <Toolbar />
-      <Divider />
+    <Box sx={{ mt: '64px' }}>
       <List>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
@@ -79,9 +94,41 @@ export default function MainLayout({ children }: MainLayoutProps) {
                 navigate(item.path)
                 setMobileOpen(false)
               }}
+              sx={{
+                minHeight: 48,
+                px: 2.5,
+                '&.Mui-selected': {
+                  backgroundColor: 'action.selected',
+                  borderRight: (theme) =>
+                    `3px solid ${theme.palette.primary.main}`,
+                  '&:hover': {
+                    backgroundColor: 'action.selected',
+                  },
+                },
+              }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: 2,
+                  justifyContent: 'center',
+                  color:
+                    location.pathname === item.path
+                      ? 'primary.main'
+                      : 'inherit',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText
+                primary={item.text}
+                sx={{
+                  color:
+                    location.pathname === item.path
+                      ? 'primary.main'
+                      : 'inherit',
+                }}
+              />
             </ListItemButton>
           </ListItem>
         ))}
@@ -96,16 +143,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
         <AppBar
           position='fixed'
           sx={{
-            width: {
-              sm: settings.theme.drawerOpen
-                ? `calc(100% - ${drawerWidth}px)`
-                : '100%',
-            },
-            ml: { sm: settings.theme.drawerOpen ? drawerWidth : 0 },
-            transition: theme.transitions.create(['margin', 'width'], {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
-            }),
+            width: '100%',
+            zIndex: theme.zIndex.drawer + 1,
           }}
         >
           <Toolbar>
@@ -129,17 +168,47 @@ export default function MainLayout({ children }: MainLayoutProps) {
               variant='h6'
               noWrap
               component='div'
-              sx={{ flexGrow: 1 }}
+              sx={{
+                flexGrow: 1,
+                cursor: 'pointer',
+                '&:hover': {
+                  opacity: 0.8,
+                },
+              }}
+              onClick={() => navigate('/home')}
             >
               Memory Lane
             </Typography>
-            <IconButton color='inherit' onClick={toggleTheme}>
-              {settings.theme.mode === 'dark' ? (
-                <Brightness7 />
-              ) : (
-                <Brightness4 />
-              )}
-            </IconButton>
+            {user && (
+              <>
+                <IconButton
+                  size='large'
+                  onClick={handleMenu}
+                  color='inherit'
+                  sx={{ ml: 2 }}
+                >
+                  <Avatar sx={{ width: 32, height: 32 }}>
+                    {user.name?.[0]?.toUpperCase() || 'U'}
+                  </Avatar>
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleCloseMenu}
+                >
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </>
+            )}
           </Toolbar>
         </AppBar>
 
@@ -148,9 +217,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
           sx={{
             width: { sm: settings.theme.drawerOpen ? drawerWidth : 0 },
             flexShrink: { sm: 0 },
-            transition: theme.transitions.create('width', {
+            transition: theme.transitions.create(['width', 'margin'], {
               easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
+              duration: theme.transitions.duration.enteringScreen,
             }),
           }}
         >
@@ -166,6 +235,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
               '& .MuiDrawer-paper': {
                 boxSizing: 'border-box',
                 width: drawerWidth,
+                height: '100%',
+                transition: theme.transitions.create(['width', 'margin'], {
+                  easing: theme.transitions.easing.sharp,
+                  duration: theme.transitions.duration.enteringScreen,
+                }),
               },
             }}
           >
@@ -178,10 +252,12 @@ export default function MainLayout({ children }: MainLayoutProps) {
               '& .MuiDrawer-paper': {
                 boxSizing: 'border-box',
                 width: drawerWidth,
-                transition: theme.transitions.create('width', {
+                height: '100%',
+                transition: theme.transitions.create(['width', 'margin'], {
                   easing: theme.transitions.easing.sharp,
-                  duration: theme.transitions.duration.leavingScreen,
+                  duration: theme.transitions.duration.enteringScreen,
                 }),
+                overflowX: 'hidden',
               },
             }}
             open={settings.theme.drawerOpen}
@@ -194,20 +270,19 @@ export default function MainLayout({ children }: MainLayoutProps) {
           component='main'
           sx={{
             flexGrow: 1,
-            width: {
-              sm: settings.theme.drawerOpen
-                ? `calc(100% - ${drawerWidth}px)`
-                : '100%',
-            },
-            ml: { sm: settings.theme.drawerOpen ? drawerWidth : 0 },
+            width: '100%',
+            pl: { sm: settings.theme.drawerOpen ? `${drawerWidth}px` : 0 },
             pt: { xs: 8, sm: 9 },
-            transition: theme.transitions.create(['margin', 'width'], {
+            px: { xs: 2, sm: 2.5 },
+            transition: theme.transitions.create('padding', {
               easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
+              duration: theme.transitions.duration.enteringScreen,
             }),
           }}
         >
-          {children}
+          <Suspense fallback={<LinearProgress />}>
+            <FadeTransition>{children}</FadeTransition>
+          </Suspense>
         </Box>
       </Box>
     </ThemeProvider>

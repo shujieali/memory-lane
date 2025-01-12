@@ -1,41 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from 'react'
-import {
-  AppSettings,
-  SettingsContextType,
-  defaultSettings,
-} from '../types/settings'
+import { useEffect, useState, ReactNode } from 'react'
+import { AppSettings, defaultSettings } from '../types/settings'
 import { deepMerge, DeepPartial } from '../utils/deepMerge'
-
-const SETTINGS_STORAGE_KEY = 'app_settings'
-
-const SettingsContext = createContext<SettingsContextType | null>(null)
-
-function loadSettings(): AppSettings {
-  try {
-    const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY)
-    if (savedSettings) {
-      return deepMerge(defaultSettings, JSON.parse(savedSettings))
-    }
-  } catch (error) {
-    // Use template literal for proper string formatting
-    console.error(`Failed to load settings: ${error}`)
-  }
-  return defaultSettings
-}
-
-function saveSettings(settings: AppSettings) {
-  try {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings))
-  } catch (error) {
-    console.error(`Failed to save settings: ${error}`)
-  }
-}
+import { loadSettings, saveSettings } from './settingsUtils'
+import { SettingsContext } from './contexts'
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<AppSettings>(loadSettings)
@@ -63,12 +30,4 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       {children}
     </SettingsContext.Provider>
   )
-}
-
-export function useSettings() {
-  const context = useContext(SettingsContext)
-  if (!context) {
-    throw new Error('useSettings must be used within a SettingsProvider')
-  }
-  return context
 }

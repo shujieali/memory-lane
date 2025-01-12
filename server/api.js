@@ -190,7 +190,7 @@ app.post(
         },
         token,
       })
-    } catch (err) {
+    } catch (_err) {
       res.status(500).json({ error: 'Server error' })
     }
   },
@@ -228,7 +228,7 @@ app.get(
         )
       })
       res.json({ memories })
-    } catch (err) {
+    } catch (_err) {
       res.status(500).json({ error: 'Server error' })
     }
   },
@@ -280,7 +280,7 @@ app.post(
         )
       })
       res.status(201).json({ message: 'Memory created successfully' })
-    } catch (err) {
+    } catch (_err) {
       res.status(500).json({ error: 'Server error' })
     }
   },
@@ -334,7 +334,7 @@ app.put(
         )
       })
       res.json({ message: 'Memory updated successfully' })
-    } catch (err) {
+    } catch (_err) {
       res.status(500).json({ error: 'Server error' })
     }
   },
@@ -376,7 +376,7 @@ app.delete(
         })
       })
       res.json({ message: 'Memory deleted successfully' })
-    } catch (err) {
+    } catch (_err) {
       res.status(500).json({ error: 'Server error' })
     }
   },
@@ -434,14 +434,14 @@ app.post(
       })
 
       res.json({ is_favorite: updatedMemory.is_favorite })
-    } catch (err) {
+    } catch (_err) {
       res.status(500).json({ error: 'Server error' })
     }
   },
 )
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   console.error(err.stack)
   res.status(500).json({ error: 'Something broke!' })
 })

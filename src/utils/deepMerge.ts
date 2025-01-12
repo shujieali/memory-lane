@@ -10,7 +10,7 @@ function isObject(item: unknown): item is Record<string, unknown> {
   return typeof item === 'object' && item !== null && !Array.isArray(item)
 }
 
-export function deepMerge<T extends Record<string, unknown>>(
+export function deepMerge<T>(
   target: T,
   source: DeepPartial<T> | null | undefined,
 ): T {
@@ -32,9 +32,9 @@ export function deepMerge<T extends Record<string, unknown>>(
       ) {
         // If both values are objects, recursively merge them
         output[key] = deepMerge(
-          targetValue as Record<string, unknown>,
-          sourceValue as DeepPartial<Record<string, unknown>>,
-        ) as T[Extract<keyof T, string>]
+          targetValue,
+          sourceValue as DeepPartial<typeof targetValue>,
+        )
       } else if (sourceValue !== undefined) {
         // Otherwise, just replace the value
         output[key] = sourceValue as T[Extract<keyof T, string>]

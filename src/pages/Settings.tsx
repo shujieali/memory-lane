@@ -10,8 +10,15 @@ import {
   RadioGroup,
   Switch,
   Typography,
+  Stack,
 } from '@mui/material'
-import { useSettings } from '../context/SettingsContext'
+import { useSettings } from '../hooks'
+import {
+  Brightness4,
+  Brightness7,
+  ViewCompact,
+  ViewComfy,
+} from '@mui/icons-material'
 
 export default function Settings() {
   const { settings, updateSettings } = useSettings()
@@ -25,44 +32,66 @@ export default function Settings() {
 
         <Paper sx={{ p: 3, mb: 3 }}>
           <Typography variant='h6' gutterBottom>
-            Theme
+            Theme & Display
           </Typography>
-          <FormControl component='fieldset'>
-            <FormLabel component='legend'>Mode</FormLabel>
-            <RadioGroup
-              value={settings.theme.mode}
-              onChange={(e) =>
-                updateSettings({
-                  theme: { mode: e.target.value as 'light' | 'dark' },
-                })
-              }
-            >
-              <FormControlLabel
-                value='light'
-                control={<Radio />}
-                label='Light'
-              />
-              <FormControlLabel value='dark' control={<Radio />} label='Dark' />
-            </RadioGroup>
-          </FormControl>
 
-          <Box sx={{ mt: 2 }}>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={settings.theme.compactView}
-                    onChange={(e) =>
-                      updateSettings({
-                        theme: { compactView: e.target.checked },
-                      })
-                    }
-                  />
+          <Stack spacing={3}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                bgcolor: 'background.default',
+                p: 2,
+                borderRadius: 1,
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {settings.theme.mode === 'dark' ? (
+                  <Brightness4 color='primary' />
+                ) : (
+                  <Brightness7 color='primary' />
+                )}
+                <Typography>Dark Mode</Typography>
+              </Box>
+              <Switch
+                checked={settings.theme.mode === 'dark'}
+                onChange={(e) =>
+                  updateSettings({
+                    theme: { mode: e.target.checked ? 'dark' : 'light' },
+                  })
                 }
-                label='Compact View'
               />
-            </FormGroup>
-          </Box>
+            </Box>
+
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                bgcolor: 'background.default',
+                p: 2,
+                borderRadius: 1,
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {settings.theme.compactView ? (
+                  <ViewCompact color='primary' />
+                ) : (
+                  <ViewComfy color='primary' />
+                )}
+                <Typography>Compact View</Typography>
+              </Box>
+              <Switch
+                checked={settings.theme.compactView}
+                onChange={(e) =>
+                  updateSettings({
+                    theme: { compactView: e.target.checked },
+                  })
+                }
+              />
+            </Box>
+          </Stack>
         </Paper>
 
         <Paper sx={{ p: 3, mb: 3 }}>

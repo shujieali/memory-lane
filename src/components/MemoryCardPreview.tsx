@@ -10,24 +10,15 @@ import {
   Chip,
   Stack,
 } from '@mui/material'
-import {
-  Edit,
-  Delete,
-  Favorite,
-  FavoriteBorder,
-  LocalOffer,
-} from '@mui/icons-material'
+import { Favorite, FavoriteBorder, LocalOffer } from '@mui/icons-material'
 import { useState } from 'react'
 import { api } from '../services/api'
 import { Memory } from '../types/memory'
 import { useSettings } from '../hooks'
 
-interface MemoryCardProps extends Omit<Memory, 'user_id'> {
-  onEdit: (id: string) => void
-  onDelete: (id: string) => void
-}
+type MemoryCardPreviewProps = Omit<Memory, 'user_id'>
 
-export default function MemoryCard({
+export default function MemoryCardPreview({
   id,
   title,
   description,
@@ -35,9 +26,7 @@ export default function MemoryCard({
   timestamp,
   is_favorite,
   tags = [],
-  onEdit,
-  onDelete,
-}: MemoryCardProps) {
+}: MemoryCardPreviewProps) {
   const [isFavorite, setIsFavorite] = useState(is_favorite)
   const [imageLoading, setImageLoading] = useState(true)
 
@@ -110,7 +99,6 @@ export default function MemoryCard({
     >
       {imageLoading && (
         <Skeleton
-          data-testid='skeleton'
           variant='rectangular'
           height={compactView ? 150 : 200}
           animation='wave'
@@ -161,28 +149,10 @@ export default function MemoryCard({
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'space-between',
+            justifyContent: 'flex-end',
             width: '100%',
           }}
         >
-          <Box>
-            <IconButton
-              onClick={() => onEdit(id)}
-              size='small'
-              color='primary'
-              aria-label='edit memory'
-            >
-              <Edit />
-            </IconButton>
-            <IconButton
-              onClick={() => onDelete(id)}
-              size='small'
-              color='error'
-              aria-label='delete memory'
-            >
-              <Delete />
-            </IconButton>
-          </Box>
           <IconButton
             onClick={async () => {
               try {
