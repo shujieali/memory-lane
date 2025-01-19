@@ -12,9 +12,16 @@
     "lint:backend": "eslint \"server/**/*.{js,ts}\" -c .eslintrc.cjs --max-warnings 0",
     "preview": "vite preview",
     "prepare": "husky",
-    "test": "jest --config jest.config.js",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "jest --config jest.config.js --selectProjects frontend",
+    "test:backend": "jest --config jest.config.js --selectProjects backend",
     "test:watch": "jest --config jest.config.js --watch",
-    "test:coverage": "jest --config jest.config.js --coverage"
+    "test:coverage": "jest --config jest.config.js --coverage",
+    "test:frontend:coverage": "jest --config jest.config.js --selectProjects frontend --coverage",
+    "test:backend:coverage": "jest --config jest.config.js --selectProjects backend --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.726.1",
@@ -44,11 +51,14 @@
     "react-dropzone": "^14.3.5",
     "react-helmet": "^6.1.0",
     "react-router-dom": "^7.1.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.6.1",
     "@commitlint/config-conventional": "^19.6.0",
+    "@playwright/test": "^1.49.1",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
