@@ -58,9 +58,10 @@ function generateHtml(metaTags, redirectUrl) {
           ) || navigator.userAgent.toLowerCase().includes('bot');
 
           // Redirect non-bot users to the actual app
-          if (!isBot) {
-            window.location.href = '${redirectUrl}';
-          }
+          // temporary stopping redirects
+          // if (!isBot) {
+          //   window.location.href = '${redirectUrl}';
+          // }
         </script>
       </head>
       <body>
@@ -127,11 +128,13 @@ async function handleSocialShare(req, res) {
     const metaTags = await generateMetaTags(memory, baseUrl)
     const html = generateHtml(metaTags, redirectUrl)
 
-    if (req.isSocialBot) {
-      res.send(html)
-    } else {
-      res.redirect(redirectUrl)
-    }
+    // temporary stopping redirects
+    res.send(html)
+    // if (req.isSocialBot) {
+    //   res.send(html)
+    // } else {
+    //   res.redirect(redirectUrl)
+    // }
   } catch (error) {
     console.error('Error in handleSocialShare:', error)
     res.status(404).send('Not found')

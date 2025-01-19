@@ -14,7 +14,6 @@ import Search from '../components/Search'
 import Sort from '../components/Sort'
 import { ShareButton } from '../features/share'
 import { Memory } from '../types/memory'
-import { getRoutePathWithParams } from '../Routes/utils'
 import MemoryLane from '../features/memories/components/MemoryLane'
 
 export default function Memories() {

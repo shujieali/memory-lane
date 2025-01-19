@@ -7,7 +7,7 @@ export const ROUTE_PATHS = {
   settings: '/settings',
   memories: '/memories',
   memoryDetail: '/memory/:id',
-  publicMemory: '/shared/memories/:public_id',
+  publicMemory: '/shared/memory/:public_id',
   publicLane: '/shared/lane/:userId',
   offline: '/offline',
 } as const
