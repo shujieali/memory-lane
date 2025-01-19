@@ -28,10 +28,12 @@ async function generateMetaTags(memory, baseUrl, dimensions) {
 
   return `
     <!-- Essential Meta Tags -->
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content="${title}">
     <meta property="og:description" content="${description}">
     <meta property="og:image" content="${imageUrl}">
-    <meta property="og:url" content="[Your-URL-Here]">
+    <meta property="og:image:width" content="${dimensions.width}" />
+    <meta property="og:image:height" content="${dimensions.height}" />
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Memory Lane">
 
@@ -43,8 +45,6 @@ async function generateMetaTags(memory, baseUrl, dimensions) {
     <meta property="og:image" content="${imageUrl}" />
     <meta property="og:image:secure_url" content="${imageUrl}" />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="${dimensions.width}" />
-    <meta property="og:image:height" content="${dimensions.height}" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -52,6 +52,29 @@ async function generateMetaTags(memory, baseUrl, dimensions) {
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
     <meta name="twitter:image" content="${imageUrl}" />
+    <meta name="twitter:domain" content="memorylane.com" />
+
+    <!-- Schema.org for Google -->
+    <meta itemprop="name" content="${title}" />
+    <meta itemprop="description" content="${description}" />
+    <meta itemprop="image" content="${imageUrl}" />
+
+    <!-- LinkedIn -->
+    <meta property="linkedin:title" content="${title}" />
+    <meta property="linkedin:description" content="${description}" />
+    <meta property="linkedin:image" content="${imageUrl}" />
+
+    <!-- Pinterest -->
+    <meta property="pinterest:title" content="${title}" />
+    <meta property="pinterest:description" content="${description}" />
+    <meta property="pinterest:image" content="${imageUrl}" />
+    <meta property="pinterest:media" content="${imageUrl}" />
+    <meta name="pinterest" content="nopin" />
+
+    <!-- KakaoTalk -->
+    <meta property="kakao:title" content="${title}" />
+    <meta property="kakao:description" content="${description}" />
+    <meta property="kakao:image" content="${imageUrl}" />
 
     <!-- Additional social platforms -->
     <meta property="article:published_time" content="${new Date().toISOString()}" />

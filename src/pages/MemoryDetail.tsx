@@ -1,8 +1,7 @@
-import { Fragment, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { Box, IconButton } from '@mui/material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Helmet } from 'react-helmet'
 import { useAuth } from '../hooks'
 import { Memory } from '../types/memory'
 import { api } from '../services/api'
@@ -38,29 +37,11 @@ export default function MemoryDetail() {
   }
 
   return (
-    <Fragment>
-      <Helmet>
-        <title>{`${user?.name}'s Memory`}</title>
-        <meta name='title' content={memory.title} />
-        <meta name='description' content={memory.description} />
-        <meta name='image' content={memory.image_urls[0]} />
-        <meta name='url' content={window.location.href} />
-        <meta property='og:type' content='website' />
-        <meta property='og:site_name' content='Memory Lane' />
-        <meta property='og:locale' content='en_US' />
-        <meta property='og:locale:alternate' content='en_US' />
-        <meta property='og:type' content='article' />
-        <meta property='og:title' content={memory.title} />
-        <meta property='og:description' content={memory.description} />
-        <meta property='og:image' content={memory.image_urls[0]} />
-        <meta property='og:url' content={window.location.href} />
-      </Helmet>
-      <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
-        <IconButton onClick={() => navigate(-1)} sx={{ mb: 2 }}>
-          <ArrowBackIcon />
-        </IconButton>
-        <MemoryCardPreview memory={memory} />
-      </Box>
-    </Fragment>
+    <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
+      <IconButton onClick={() => navigate(-1)} sx={{ mb: 2 }}>
+        <ArrowBackIcon />
+      </IconButton>
+      <MemoryCardPreview memory={memory} />
+    </Box>
   )
 }

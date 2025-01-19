@@ -3,6 +3,7 @@ import { ComponentType } from 'react'
 import { RouteGuard } from './guards'
 import { routeConfig } from './config'
 import { ROUTE_PATHS } from './constants'
+import { Helmet } from 'react-helmet'
 
 // Group routes by layout
 const groupRoutesByLayout = (routes: typeof routeConfig) => {
@@ -25,9 +26,13 @@ const groupRoutesByLayout = (routes: typeof routeConfig) => {
 
 const renderRouteWithGuard = (route: (typeof routeConfig)[0]) => {
   const Component = route.component
+  const pageTitle = Component.name.replace(/Page$/, '')
 
   return (
     <RouteGuard access={route.access} redirectTo={route.redirectTo}>
+      <Helmet>
+        <title>{`${pageTitle} | Memory Lane`}</title>
+      </Helmet>
       <Component />
     </RouteGuard>
   )
