@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { AuthProvider } from '../authContext'
+import { AuthProvider } from '../AuthContext'
 import { useAuth } from '../../hooks/useAuth'
 import { auth } from '../../services/auth'
 
