@@ -396,10 +396,10 @@ const getPublicMemories = async (req, res) => {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    res.json({ memories, user })
+    return res.json({ memories, user })
   } catch (err) {
     console.error('Error fetching public memories:', err)
-    res.status(500).json({ error: 'Server error' })
+    return res.status(500).json({ error: 'Server error' })
   }
 }
 
@@ -422,14 +422,14 @@ const getPublicMemory = async (req, res) => {
       return res.status(404).json({ error: 'Memory not found' })
     }
 
-    res.json({
+    return res.json({
       ...memory,
       image_urls: JSON.parse(memory.image_urls),
       tags: memory.tags ? JSON.parse(memory.tags) : [],
     })
   } catch (err) {
     console.error('Error fetching public memory:', err)
-    res.status(500).json({ error: 'Server error' })
+    return res.status(500).json({ error: 'Server error' })
   }
 }
 

@@ -54,12 +54,36 @@ async function handleSocialShare(req, res) {
     let redirectUrl
 
     if (type === 'memory') {
-      memory = await getPublicMemory({ params: { public_id: id } })
+      const mockReq = { params: { public_id: id } }
+      const mockRes = {
+        json: (data) => data,
+        status: () => mockRes,
+      }
+      memory = await new Promise((resolve) => {
+        getPublicMemory(mockReq, mockRes)
+          .then((data) => resolve(data))
+          .catch(() => resolve(null))
+      })
       redirectUrl = `${frontendUrl}/public/memory/${id}`
     } else if (type === 'lane') {
-      const memories = await getPublicMemories({ params: { user_id: id } })
+      const mockReq = { params: { user_id: id }, query: {} }
+      const mockRes = {
+        json: (data) => data,
+        status: () => mockRes,
+      }
+      const response = await new Promise((resolve) => {
+        return getPublicMemories(mockReq, mockRes)
+          .then((data) => {
+            resolve(data)
+          })
+          .catch(() => {
+            resolve({ memories: [], user: null })
+          })
+      })
+      const memories = response.memories
+      const user = response.user
       memory = {
-        title: 'Memory Lane',
+        title: `${user.name}'s Memory Lane`,
         description: `Check out this collection of ${memories.length} memories`,
         image_urls: memories[0]?.image_urls || [],
       }
