@@ -13,12 +13,24 @@ A web application that allows users to create, manage, and organize their memori
 - **Memory Management**:
 
   - Create, edit, and delete memories
+  - Multi-image support with carousel
+  - Drag-and-drop file uploads
+  - Upload progress indicators
   - Add tags to organize memories
   - Mark memories as favorites
   - Image loading with skeleton states
   - Responsive grid layout
   - Surprise memories on home page
   - Chronological timeline view
+
+- **Storage System**:
+
+  - Multiple storage provider support
+  - AWS S3 integration
+  - Google Cloud Storage
+  - Local file system storage
+  - Optional CDN configuration
+  - Flexible provider switching
 
 - **User Interface**:
 
@@ -28,6 +40,7 @@ A web application that allows users to create, manage, and organize their memori
   - Compact/Regular view modes
   - Customizable grid layout
   - Show/hide dates and tags
+  - Toast notifications
 
 - **Settings**:
   - Theme preferences
@@ -46,6 +59,7 @@ A web application that allows users to create, manage, and organize their memori
 - [Module Systems](docs/module-systems.md) - Frontend/Backend module system configuration
 - [Development Workflow](docs/development-workflow.md) - Setup, tooling, and development practices
 - [Technical Decisions](docs/technical-decisions.md) - Log of architectural and technical decisions
+- [Deployment Guide](docs/deployment.md) - Production deployment instructions
 
 ## Quick Start
 
@@ -64,10 +78,16 @@ A web application that allows users to create, manage, and organize their memori
 3. Create .env file:
 
    ```env
+   # Server Configuration
    PORT=4001
    JWT_SECRET=your-super-secret-key-change-in-production
    CORS_ORIGIN=http://localhost:5173
-   DB_PATH=memories.db
+   BASE_URL=http://localhost:4001
+   FRONTEND_URL=http://localhost:5173
+
+   # Storage Configuration (choose one)
+   STORAGE_TYPE=local  # Options: local, s3, gcp
+   LOCAL_STORAGE_PATH=uploads
    ```
 
 4. Start development servers:
@@ -88,6 +108,7 @@ A web application that allows users to create, manage, and organize their memori
 - React Context with custom hooks
 - Centralized context definitions
 - Jest and React Testing Library
+- React Dropzone for file uploads
 
 ### Backend
 
@@ -97,6 +118,9 @@ A web application that allows users to create, manage, and organize their memori
 - Password hashing with salt
 - Rate limiting and CORS
 - Input validation
+- Multiple storage providers
+- Factory pattern for storage
+- SEO optimization
 
 ## Development Tools
 
@@ -121,10 +145,35 @@ A web application that allows users to create, manage, and organize their memori
 ### Environment Variables
 
 ```env
+# Server Configuration
 PORT=4001                # Server port
 JWT_SECRET=xxx          # JWT signing key
 CORS_ORIGIN=xxx        # Allowed frontend origin
-DB_PATH=memories.db    # SQLite database path
+BASE_URL=xxx           # Backend base URL
+FRONTEND_URL=xxx       # Frontend base URL
+
+# Storage Configuration
+STORAGE_TYPE=local     # Storage provider (local/s3/gcp)
+
+# Local Storage Configuration
+LOCAL_STORAGE_PATH=uploads  # Local storage directory
+
+# AWS S3 Configuration
+AWS_ACCESS_KEY_ID=xxx     # AWS access key
+AWS_SECRET_ACCESS_KEY=xxx # AWS secret key
+AWS_REGION=xxx           # AWS region
+S3_BUCKET_NAME=xxx       # S3 bucket name
+S3_MAX_CONTENT_SIZE=xxx  # Max upload size (bytes)
+MEDIA_CDN_URL=xxx        # Optional CDN URL
+
+# Google Cloud Storage Configuration
+GCP_PROJECT_ID=xxx       # GCP project ID
+GCP_KEY_FILE=xxx        # Service account key file path
+GCP_BUCKET_NAME=xxx     # GCS bucket name
+
+# Email Configuration
+SENDGRID_API_KEY=xxx    # SendGrid API key
+FROM_EMAIL=xxx          # Sender email address
 ```
 
 ### Build Configuration
@@ -143,6 +192,8 @@ memory-lane/
 │   ├── hooks/       # Custom React hooks
 │   └── ...          # Other frontend directories
 ├── server/           # Backend Express/Node.js
+│   ├── services/    # Including storage providers
+│   └── ...          # Other backend directories
 ├── docs/            # Documentation
 └── [config files]   # Configuration files
 ```
@@ -156,6 +207,17 @@ See [Project Structure](docs/project-structure.md) for detailed organization.
 3. Changes are automatically reloaded
 4. Commits are checked for style and messages
 5. Tests run automatically in CI
+
+## Deployment
+
+See [Deployment Guide](docs/deployment.md) for detailed instructions on:
+
+- Setting up EC2 instances
+- Configuring PM2 process management
+- Database setup and permissions
+- Storage provider configuration
+- Security considerations
+- Maintenance procedures
 
 ## Testing
 

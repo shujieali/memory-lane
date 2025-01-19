@@ -1,63 +1,114 @@
-import { Box, Container, Typography, Paper } from '@mui/material'
+import { useEffect, useState, useCallback } from 'react'
+import { debounce } from 'lodash'
 import {
-  Timeline,
-  TimelineItem,
-  TimelineSeparator,
-  TimelineConnector,
-  TimelineContent,
-  TimelineDot,
-  TimelineOppositeContent,
-} from '@mui/lab'
-import { useEffect, useState } from 'react'
+  Box,
+  Container,
+  Typography,
+  Paper,
+  CircularProgress,
+} from '@mui/material'
+import { SelectChangeEvent } from '@mui/material/Select'
 import { useAuth } from '../hooks'
 import { api } from '../services/api'
-import MemoryCardPreview from '../components/MemoryCardPreview'
+import Search from '../components/Search'
+import Sort from '../components/Sort'
+import { ShareButton } from '../features/share'
 import { Memory } from '../types/memory'
+import { getRoutePathWithParams } from '../Routes/utils'
+import MemoryLane from '../features/memories/components/MemoryLane'
 
 export default function Memories() {
   const { user } = useAuth()
   const [memories, setMemories] = useState<Memory[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const [hasMore, setHasMore] = useState(true)
+  const [search, setSearch] = useState('')
+  const [sort, setSort] = useState('timestamp')
+  const [order, setOrder] = useState('desc')
+
+  const fetchMemories = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await api.getMemories(
+        user?.id || '',
+        page,
+        search,
+        sort,
+        order,
+      )
+      if (data.length === 0) {
+        setHasMore(false)
+      } else {
+        setMemories((prev) => {
+          const newMemories = data.filter(
+            (memory) => !prev.some((m) => m.id === memory.id),
+          )
+          return [...prev, ...newMemories]
+        })
+        if (data.length < 10) {
+          setHasMore(false)
+        }
+      }
+    } catch (err) {
+      setError('Failed to load memories')
+      console.error('Error fetching memories:', err)
+    } finally {
+      setLoading(false)
+    }
+  }, [user?.id, page, search, sort, order])
 
   useEffect(() => {
-    const fetchMemories = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await api.getMemories(user?.id || '')
-        // Sort memories by date, newest first
-        const sorted = data.sort(
-          (a, b) =>
-            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
-        )
-        setMemories(sorted)
-      } catch (err) {
-        setError('Failed to load memories')
-        console.error('Error fetching memories:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     if (user?.id) {
       fetchMemories()
     }
-  }, [user?.id])
+  }, [user?.id, fetchMemories, page, search, sort, order])
 
-  if (loading) {
-    return (
-      <Container maxWidth='md'>
-        <Box sx={{ p: 3 }}>
-          <Typography variant='h4' gutterBottom>
-            Your Memory Timeline
-          </Typography>
-          <Paper sx={{ p: 4, textAlign: 'center' }}>
-            <Typography>Loading memories...</Typography>
-          </Paper>
-        </Box>
-      </Container>
-    )
+  const debouncedScrollHandler = debounce(
+    () => {
+      const scrollPosition =
+        window.innerHeight + document.documentElement.scrollTop
+      const threshold = document.documentElement.offsetHeight * 0.8
+      if (scrollPosition < threshold || loading || !hasMore) {
+        return
+      }
+      setPage((prevPage) => prevPage + 1)
+    },
+    200,
+    { leading: false, trailing: true },
+  )
+
+  // Wrap the debounced function in a stable callback
+  const handleScroll = useCallback(() => {
+    debouncedScrollHandler()
+  }, [debouncedScrollHandler])
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [handleScroll])
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value)
+    setPage(1)
+    setMemories([])
+    setHasMore(true)
+  }
+
+  const handleSortChange = (event: SelectChangeEvent<string>) => {
+    setSort(event.target.value as string)
+    setPage(1)
+    setMemories([])
+    setHasMore(true)
+  }
+
+  const handleOrderChange = (event: SelectChangeEvent<string>) => {
+    setOrder(event.target.value as string)
+    setPage(1)
+    setMemories([])
+    setHasMore(true)
   }
 
   if (error) {
@@ -65,7 +116,7 @@ export default function Memories() {
       <Container maxWidth='md'>
         <Box sx={{ p: 3 }}>
           <Typography variant='h4' gutterBottom>
-            Your Memory Timeline
+            {user?.name}&apos;s Memory Lane
           </Typography>
           <Paper sx={{ p: 4, textAlign: 'center' }}>
             <Typography color='error'>{error}</Typography>
@@ -75,51 +126,48 @@ export default function Memories() {
     )
   }
 
-  if (memories.length === 0) {
-    return (
-      <Container maxWidth='md'>
-        <Box sx={{ p: 3 }}>
-          <Typography variant='h4' gutterBottom>
-            Your Memory Timeline
-          </Typography>
-          <Paper sx={{ p: 4, textAlign: 'center' }}>
-            <Typography variant='h6' color='text.secondary' gutterBottom>
-              No memories yet
-            </Typography>
-            <Typography color='text.secondary'>
-              Your memories will appear here chronologically once you start
-              creating them.
-            </Typography>
-          </Paper>
-        </Box>
-      </Container>
-    )
-  }
-
   return (
-    <Container maxWidth='md'>
+    <Container
+      data-scroll-container
+      maxWidth='xl'
+      sx={{
+        overflowY: 'auto',
+        height: `calc(100vh - 75px)`,
+      }}
+    >
       <Box sx={{ p: 3 }}>
-        <Typography variant='h4' gutterBottom>
-          Your Memory Timeline
-        </Typography>
-        <Timeline position='alternate'>
-          {memories.map((memory) => (
-            <TimelineItem key={memory.id}>
-              <TimelineOppositeContent color='text.secondary'>
-                {new Date(memory.timestamp).toLocaleDateString()}
-              </TimelineOppositeContent>
-              <TimelineSeparator>
-                <TimelineDot color='primary' />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent>
-                <Box sx={{ maxWidth: 400, mx: 'auto' }}>
-                  <MemoryCardPreview {...memory} />
-                </Box>
-              </TimelineContent>
-            </TimelineItem>
-          ))}
-        </Timeline>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'row',
+            alignItems: 'baseline',
+            mb: 3,
+          }}
+        >
+          <Search search={search} onSearchChange={handleSearchChange} />
+          <Sort
+            sort={sort}
+            order={order}
+            onSortChange={handleSortChange}
+            onOrderChange={handleOrderChange}
+          />
+          <ShareButton
+            title={`${user?.name}'s Memory Lane`}
+            description='Check out my Memory Lane!'
+            url={`${window.location.origin}${getRoutePathWithParams('publicLane', { userId: user?.id || '' })}`}
+          >
+            Share
+          </ShareButton>
+        </Box>
+
+        <MemoryLane memories={memories} loading={loading} error={error || ''} />
+        {loading && <CircularProgress />}
+        {!hasMore && (
+          <Typography variant='body2' color='text.secondary' align='center'>
+            No more memories to load
+          </Typography>
+        )}
       </Box>
     </Container>
   )

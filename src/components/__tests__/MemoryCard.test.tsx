@@ -1,5 +1,7 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import MemoryCard from '../MemoryCard'
+import { render } from '@testing-library/react'
+import { screen, fireEvent, waitFor } from '@testing-library/dom'
+import '@testing-library/jest-dom'
+import MemoryCard from '../../features/memories/components/MemoryCard'
 import { api } from '../../services/api'
 import { Memory } from '../../types/memory'
 
@@ -13,9 +15,10 @@ describe('MemoryCard', () => {
     onDelete: (id: string) => void
   } = {
     id: '1',
+    public_id: 'test-public-id',
     title: 'Test Memory',
     description: 'Test Description',
-    image_url: 'https://example.com/image.jpg',
+    image_urls: ['https://example.com/image.jpg'],
     timestamp: '2024-03-20T12:00:00Z',
     is_favorite: false,
     onEdit: jest.fn(),
@@ -34,7 +37,7 @@ describe('MemoryCard', () => {
     expect(screen.getByText('3/20/2024')).toBeInTheDocument()
 
     const image = screen.getByAltText(mockProps.title)
-    expect(image).toHaveAttribute('src', mockProps.image_url)
+    expect(image).toHaveAttribute('src', mockProps.image_urls)
   })
 
   it('calls onEdit when edit button is clicked', () => {

@@ -1,15 +1,5 @@
-import { User } from '../types/auth'
-
-const API_BASE_URL = 'http://localhost:4001'
-
-export interface LoginCredentials {
-  email: string
-  password: string
-}
-
-export interface RegisterCredentials extends LoginCredentials {
-  name: string
-}
+import { User, LoginCredentials, RegisterCredentials } from './types'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || window.location.origin
 
 export const auth = {
   async login({ email, password }: LoginCredentials): Promise<User> {

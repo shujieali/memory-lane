@@ -7,6 +7,7 @@ After a series of discovery calls, a problem was identified where users are havi
 ## First Iteration Requirements
 
 Build a web application that allows users to:
+
 - Create a memory lane (chronological collection of events)
 - Share memories with friends and family
 - Each memory/event must include:
@@ -18,11 +19,13 @@ Build a web application that allows users to:
 ## Technical Requirements
 
 1. Implementation:
+
    - Update API to accommodate technical design
    - Run API using `npm run serve:api`
    - UI implementation with screenshots/video demo
 
 2. Development Freedom:
+
    - Can add frameworks like Next.js
    - User authentication not required
    - Component libraries allowed

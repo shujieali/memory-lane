@@ -1,34 +1,115 @@
+import axios, { AxiosProgressEvent } from 'axios'
 import { Memory } from '../types/memory'
+import { User } from '../types/user'
+import { FileProgress, CreateMemoryPayload, UpdateMemoryPayload } from './types'
 import { handleUnauthorized, withAuth } from '../utils/apiUtils'
 
-const API_BASE_URL = 'http://localhost:4001'
-
-export interface CreateMemoryPayload {
-  user_id: string
-  title: string
-  description: string
-  image_url: string
-  timestamp: string
-}
-
-export interface UpdateMemoryPayload {
-  title: string
-  description: string
-  image_url: string
-  timestamp: string
-}
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || window.location.origin
 
 export const api = {
-  async getMemories(userId: string): Promise<Memory[]> {
-    const response = await fetch(`${API_BASE_URL}/memories?user_id=${userId}`, {
-      headers: withAuth(),
-    })
+  async getMemories(
+    userId: string,
+    page: number = 1,
+    search: string = '',
+    sort: string = 'timestamp',
+    order: string = 'desc',
+  ): Promise<Memory[]> {
+    const response = await fetch(
+      `${API_BASE_URL}/memories?user_id=${userId}&page=${page}&search=${search}&sort=${sort}&order=${order}`,
+      {
+        headers: withAuth(),
+      },
+    )
     await handleUnauthorized(response)
     if (!response.ok) {
       throw new Error('Failed to fetch memories')
     }
     const data = await response.json()
     return data.memories
+  },
+
+  async getUploadUrl(): Promise<{
+    url: string
+    fields: Record<string, string>
+    fileUrl: string
+  }> {
+    const response = await fetch(`${API_BASE_URL}/api/storage/url`, {
+      headers: withAuth(),
+    })
+    await handleUnauthorized(response)
+    if (!response.ok) {
+      throw new Error('Failed to get upload URL')
+    }
+    const data = await response.json()
+    return {
+      url: data.url,
+      fields: data.fields,
+      fileUrl: data.fileUrl,
+    }
+  },
+
+  async deleteFiles(fileUrls: string[]): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/api/storage/delete`, {
+      method: 'POST',
+      headers: withAuth({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify({ fileUrls }),
+    })
+    await handleUnauthorized(response)
+    if (!response.ok) {
+      throw new Error('Failed to delete files')
+    }
+  },
+
+  async uploadFiles(
+    files: FileList,
+    onProgress: (progress: FileProgress) => void,
+  ): Promise<Array<{ name: string; fileUrl: string }>> {
+    const uploadedUrls = []
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      try {
+        // Start with 0 progress
+        onProgress({ name: file.name, progress: 0 })
+
+        // Set up upload
+        const { url, fields, fileUrl } = await this.getUploadUrl()
+        const formData = new FormData()
+
+        // Add all fields from the pre-signed URL first
+        Object.entries(fields).forEach(([key, value]) => {
+          formData.append(key, value)
+        })
+
+        // Add the file last
+        formData.append('file', file)
+
+        // For local storage, use the provided URL directly
+        // For cloud storage (S3, GCP), use pre-signed URL
+        const uploadUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`
+
+        // Upload with progress tracking
+        await axios.post(uploadUrl, formData, {
+          onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || file.size),
+            )
+            onProgress({ name: file.name, progress: percentCompleted })
+          },
+        })
+
+        uploadedUrls.push({
+          name: file.name,
+          fileUrl,
+        })
+      } catch (err) {
+        console.error('Error uploading file:', err)
+        throw new Error(`Failed to upload file: ${file.name}`)
+      }
+    }
+    return uploadedUrls
   },
 
   async createMemory(payload: CreateMemoryPayload): Promise<void> {
@@ -81,5 +162,96 @@ export const api = {
     }
     const data = await response.json()
     return data.is_favorite
+  },
+
+  async getMemory(id: string): Promise<Memory> {
+    const response = await fetch(`${API_BASE_URL}/memories/${id}`, {
+      headers: withAuth(),
+    })
+    await handleUnauthorized(response)
+    if (!response.ok) {
+      throw new Error('Failed to fetch memory')
+    }
+    const data = await response.json()
+    return data
+  },
+
+  async getRandomMemories(userId: string): Promise<Memory[]> {
+    const response = await fetch(
+      `${API_BASE_URL}/memories/random?user_id=${userId}`,
+      {
+        headers: withAuth(),
+      },
+    )
+    await handleUnauthorized(response)
+    if (!response.ok) {
+      throw new Error('Failed to fetch random memories')
+    }
+    const data = await response.json()
+    return data.memories
+  },
+
+  async getAllMemories(
+    userId: string,
+    search: string = '',
+    sort: string = 'timestamp',
+    order: string = 'desc',
+  ): Promise<Memory[]> {
+    const response = await fetch(
+      `${API_BASE_URL}/memories/all?user_id=${userId}&search=${search}&sort=${sort}&order=${order}`,
+      {
+        headers: withAuth(),
+      },
+    )
+    await handleUnauthorized(response)
+    if (!response.ok) {
+      throw new Error('Failed to fetch all memories')
+    }
+    const data = await response.json()
+    return data.memories
+  },
+
+  async getPublicMemory(public_id: string): Promise<Memory> {
+    const response = await fetch(`${API_BASE_URL}/memories/public/${public_id}`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch public memory')
+    }
+    const data = await response.json()
+    return data
+  },
+
+  async getPublicMemories(
+    userId: string,
+    search: string = '',
+    sort: string = 'timestamp',
+    order: string = 'desc',
+  ): Promise<{ memories: Memory[]; user: User }> {
+    const response = await fetch(
+      `${API_BASE_URL}/memories/public/user/${userId}?search=${search}&sort=${sort}&order=${order}`,
+    )
+    if (!response.ok) {
+      throw new Error('Failed to fetch public memories')
+    }
+    const data = await response.json()
+    return data
+  },
+
+  async sendAnonymousEmail(
+    email: string,
+    title: string,
+    description: string,
+    url: string,
+  ): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/email/send-anonymous-email`, {
+      method: 'POST',
+      headers: withAuth({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify({ email, title, description, url }),
+    })
+    await handleUnauthorized(response)
+    if (!response.ok) {
+      throw new Error('Failed to send email')
+    }
   },
 }

@@ -1,5 +1,195 @@
 # Technical Decisions Log
 
+## Production Deployment Architecture (2025-03-21)
+
+### Context
+
+Need to establish a robust and maintainable production deployment strategy.
+
+### Decisions
+
+1. Process Management:
+
+   - Selected PM2 for process management
+   - Ecosystem configuration for environment variables
+   - Process monitoring and logs
+   - Reason: Reliable Node.js process management and monitoring
+
+2. Database Configuration:
+
+   - Dedicated database directory with proper permissions
+   - User-specific ownership for PM2 process
+   - Automated backup procedures
+   - Reason: Secure and maintainable data storage
+
+3. Multi-Environment Support:
+
+   - Environment-specific configurations
+   - Production-specific security measures
+   - Separate frontend/backend URLs
+   - Reason: Clean separation between environments
+
+4. Storage Provider Strategy:
+
+   - Flexible provider selection per environment
+   - CDN integration for production
+   - Fallback mechanisms
+   - Reason: Optimized for different deployment scenarios
+
+### Consequences
+
+- Reliable production deployment
+- Secure database management
+- Environment-specific optimization
+- Flexible storage configuration
+
+## Multi-Provider Storage System (2025-03-21)
+
+### Context
+
+Need to support multiple storage providers for file storage to give users flexibility in deployment options.
+
+### Decisions
+
+1. Storage Provider Architecture:
+
+   - Implemented abstract StorageProvider interface
+   - Factory pattern for provider instantiation
+   - Support for AWS S3, Google Cloud Storage, and local storage
+   - Reason: Flexible and extensible storage solution
+
+2. Provider-Specific Features:
+
+   - AWS S3: Pre-signed URLs, region configuration
+   - Google Cloud Storage: Service account authentication
+   - Local Storage: File system management
+   - Reason: Leverage provider-specific capabilities
+
+3. Environment Configuration:
+   - Provider selection via STORAGE_TYPE
+   - Provider-specific credentials management
+   - Optional CDN configuration
+   - Reason: Simple deployment configuration
+
+### Consequences
+
+- Flexible storage options
+- Easy provider switching
+- Cloud-agnostic architecture
+- Simplified deployment
+
+## File Storage and Email Integration (2025-03-20)
+
+### Context
+
+Need to implement robust file storage for multiple images per memory and email sharing capabilities.
+
+### Decisions
+
+1. File Upload Features:
+
+   - Drag-and-drop support with react-dropzone
+   - Upload progress indicators
+   - File type validation
+   - Reason: Enhanced user experience for file uploads
+
+2. SendGrid Integration:
+
+   - Added SendGrid for email notifications
+   - Anonymous sharing capability
+   - Email templates for consistency
+   - Reason: Reliable email delivery and management
+
+3. Environment Configuration:
+   - Secure credential management
+   - Storage provider configuration
+   - Email sender configuration
+   - Reason: Secure and configurable external service integration
+
+### Consequences
+
+- Improved upload experience
+- Reliable email delivery
+- Better sharing capabilities
+- Configurable external services
+
+## Server Architecture Refactoring (2025-03-20)
+
+### Context
+
+Need to improve server code organization and maintainability.
+
+### Decisions
+
+1. Modular Structure:
+
+   - Separated routes, controllers, and utilities
+   - Dedicated controller for each feature
+   - Centralized database operations
+   - Reason: Better code organization and maintainability
+
+2. Enhanced Features:
+
+   - Pagination for memory listing
+   - Search and filtering capabilities
+   - Random memory selection
+   - Reason: Better performance and user experience
+
+3. Error Handling:
+   - Centralized error handling
+   - Consistent error responses
+   - Validation middleware
+   - Reason: More reliable error management
+
+### Consequences
+
+- More maintainable codebase
+- Better separation of concerns
+- Improved error handling
+- Enhanced feature set
+
+## Memory Feature Enhancements (2025-03-20)
+
+### Context
+
+Need to enhance memory management with multi-image support and improved sharing.
+
+### Decisions
+
+1. Multi-image Support:
+
+   - Multiple images per memory
+   - Image carousel navigation
+   - Thumbnail previews
+   - Reason: Richer memory content
+
+2. Memory Detail Page:
+
+   - Dedicated view for single memory
+   - Enhanced sharing options
+   - SEO optimization with meta tags
+   - Reason: Better memory viewing and sharing experience
+
+3. Search and Filter:
+
+   - Real-time search capability
+   - Sort by date or title
+   - Order control (asc/desc)
+   - Reason: Better memory organization
+
+4. Infinite Scroll:
+   - Lazy loading of memories
+   - Performance optimization
+   - Loading indicators
+   - Reason: Better performance with large datasets
+
+### Consequences
+
+- Enhanced user experience
+- Better memory organization
+- Improved sharing capabilities
+- Better performance with large datasets
+
 ## Code Organization and Linting Improvements (2025-01-16)
 
 ### Context

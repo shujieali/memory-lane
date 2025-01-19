@@ -1,4 +1,4 @@
-import { AppSettings, defaultSettings } from '../types/settings'
+import { AppSettings, defaultSettings } from './types'
 import { deepMerge, DeepPartial } from '../utils/deepMerge'
 
 export const SETTINGS_STORAGE_KEY = 'app_settings'

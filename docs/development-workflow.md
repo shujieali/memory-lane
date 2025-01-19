@@ -4,6 +4,37 @@
 
 - Node.js 20 or higher (required for Vite 6 and ESLint 9)
 - npm 8 or higher
+- Storage provider credentials (AWS S3, Google Cloud Storage, or local storage)
+- SendGrid account for email functionality
+
+## External Service Setup
+
+1. Storage Provider Setup (choose one):
+
+   a. AWS S3:
+
+   - Create an S3 bucket
+   - Create IAM user with S3 access
+   - Note down access key and secret
+   - Configure CORS for your bucket
+
+   b. Google Cloud Storage:
+
+   - Create a GCP project
+   - Create a storage bucket
+   - Generate service account key
+   - Download key file
+
+   c. Local Storage:
+
+   - No setup required
+   - Files stored in local filesystem
+   - Specify storage directory in env
+
+2. SendGrid Setup:
+   - Create SendGrid account
+   - Create API key
+   - Verify sender email address
 
 ## Getting Started
 
@@ -13,13 +44,42 @@
    node --version  # Should be v20+
    ```
 
-2. Install dependencies:
+2. Configure environment variables:
+
+   ```bash
+   # Copy example env file
+   cp example.env .env
+
+   # Edit .env with your values:
+   # Storage Configuration
+   STORAGE_TYPE=local     # Options: local, s3, gcp
+
+   # If using local storage:
+   LOCAL_STORAGE_PATH=uploads
+
+   # If using AWS S3:
+   AWS_ACCESS_KEY_ID=xxx
+   AWS_SECRET_ACCESS_KEY=xxx
+   AWS_REGION=xxx
+   S3_BUCKET_NAME=xxx
+
+   # If using Google Cloud Storage:
+   GCP_PROJECT_ID=xxx
+   GCP_KEY_FILE=xxx
+   GCP_BUCKET_NAME=xxx
+
+   # Email Configuration
+   SENDGRID_API_KEY=xxx
+   FROM_EMAIL=xxx
+   ```
+
+3. Install dependencies:
 
    ```bash
    npm install
    ```
 
-3. Start development servers:
+4. Start development servers:
    ```bash
    npm run dev
    ```
@@ -45,6 +105,7 @@
 
 - `npm run build`: Build the frontend application
 - `npm run preview`: Preview the built frontend application
+- `npm run generate-pwa-icons`: Generate PWA icons from source image
 
 ## Code Organization
 
@@ -53,14 +114,16 @@
 - React 19 with TypeScript
 - ES Modules for imports/exports
 - Vite 6 for development and building
-- Tailwind CSS for styling
+- Material-UI v6 for components
 - ESLint 9 with TypeScript and React rules
+- PWA support with service worker
 
 ### Backend (server/)
 
 - Node.js/Express code
 - CommonJS modules
 - SQLite database
+- Multiple storage providers
 - ESLint 9 with Node.js rules
 
 ## Development Practices
@@ -149,12 +212,58 @@
    - TypeScript ESLint 8.19.1
    - Express 4.21.2
    - SQLite3 5.1.7
+   - Material-UI v6.3.1
+   - @google-cloud/storage 7.15.0
+   - react-dropzone 14.3.5
+   - notistack 3.0.1
+   - multer 1.4.5-lts.1
+   - sharp 0.33.5
    - Husky 9.1.7
    - Commitlint 19.6.1
    - Lint-staged 15.3.0
    - Prettier 3.4.2
 
 9. Database
+
    - SQLite for development
    - Auto-creates database file when needed
-   - Migrations handled through API initialization
+   - Migrations for schema updates:
+     - Run `node server/migrate.js` for new changes
+     - Current migrations:
+       - Initial schema creation
+       - Add image_urls column for multi-image support
+
+10. External Services
+
+    - Storage Providers:
+      a. AWS S3:
+
+      - Pre-signed URLs for secure uploads
+      - CORS configuration required
+      - Content size limits enforced
+      - Optional CDN support
+
+      b. Google Cloud Storage:
+
+      - Service account authentication
+      - Bucket permissions setup
+      - Optional CDN configuration
+
+      c. Local Storage:
+
+      - File system storage
+      - Directory permissions setup
+      - Development-friendly option
+
+    - SendGrid for email:
+      - API key required in .env
+      - Verified sender address needed
+      - Email templates for sharing
+
+11. PWA Development
+
+    - Service worker in public/sw.js
+    - Manifest configuration in public/manifest.json
+    - Icon generation script for different sizes
+    - Offline functionality support
+    - Add to home screen capability

@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { SettingsProvider, useSettings } from '../SettingsContext'
-import { defaultSettings } from '../../types/settings'
+import { SettingsProvider } from '../settingsContext'
+import { useSettings } from '../../hooks/useSettings'
+import { defaultSettings } from '../types'
 import { ReactNode } from 'react'
 
 // Mock localStorage

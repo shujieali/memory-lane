@@ -1,37 +1,16 @@
-import {
-  Box,
-  Typography,
-  Button,
-  Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Container,
-  Paper,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Chip,
-  Stack,
-} from '@mui/material'
-import { Add, LocalOffer } from '@mui/icons-material'
+import { useState, useEffect, useCallback } from 'react'
+import { Box, Typography, Button, Grid, Container, Paper } from '@mui/material'
+import { Add } from '@mui/icons-material'
 import { useAuth } from '../hooks'
 import { useSettings } from '../hooks'
-import { useState, useEffect, KeyboardEvent } from 'react'
 import { api } from '../services/api'
-import MemoryCard from '../components/MemoryCard'
+import MemoryCard from '../features/memories/components/MemoryCard'
 import DeleteConfirmDialog from '../components/DeleteConfirmDialog'
-import { getRandomImage, ImageCategory } from '../utils/imageUtils'
-
-import { Memory, MemoryFormErrors } from '../types/memory'
-
-const emptyMemory = {
-  title: '',
-  description: '',
-}
+import SearchBar from '../components/Search'
+import SortHandler from '../components/Sort'
+import { AddMemoryDialog } from '../features/memories'
+import { Memory } from '../types/memory'
+import { SelectChangeEvent } from '@mui/material/Select'
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -39,143 +18,45 @@ export default function Dashboard() {
   const [memories, setMemories] = useState<Memory[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [openDialog, setOpenDialog] = useState(false)
+  const [openMemoryModal, setOpenMemoryModal] = useState(false)
   const [editingMemory, setEditingMemory] = useState<Memory | null>(null)
-  const [memoryForm, setMemoryForm] = useState(emptyMemory)
-  const [selectedCategory, setSelectedCategory] =
-    useState<ImageCategory>('nature')
-  const [formErrors, setFormErrors] = useState<MemoryFormErrors>({})
   const [deleteMemory, setDeleteMemory] = useState<Memory | null>(null)
-  const [tags, setTags] = useState<string[]>([])
-  const [tagInput, setTagInput] = useState('')
+  const [search, setSearch] = useState('')
+  const [sort, setSort] = useState('timestamp')
+  const [order, setOrder] = useState('desc')
 
-  const handleOpenDialog = (memory?: Memory) => {
-    if (memory) {
-      setEditingMemory(memory)
-      setMemoryForm({
-        title: memory.title,
-        description: memory.description,
-      })
-      setTags(memory.tags || [])
-    } else {
-      setEditingMemory(null)
-      setMemoryForm(emptyMemory)
-      setSelectedCategory('nature')
-      setTags([])
+  const fetchMemories = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const data = await api.getAllMemories(user?.id || '', search, sort, order)
+      setMemories(data)
+    } catch (err) {
+      setError('Failed to load memories')
+      console.error('Error fetching memories:', err)
+    } finally {
+      setLoading(false)
     }
-    setFormErrors({})
-    setOpenDialog(true)
-  }
-
-  const handleTagInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && tagInput.trim()) {
-      e.preventDefault()
-      if (!tags.includes(tagInput.trim())) {
-        setTags([...tags, tagInput.trim()])
-      }
-      setTagInput('')
-    }
-  }
-
-  const handleDeleteTag = (tagToDelete: string) => {
-    setTags(tags.filter((tag) => tag !== tagToDelete))
-  }
-
-  const handleCloseDialog = () => {
-    setOpenDialog(false)
-    setEditingMemory(null)
-    setMemoryForm(emptyMemory)
-    setFormErrors({})
-    setTags([])
-    setTagInput('')
-  }
-
-  const validateForm = (): boolean => {
-    const errors: MemoryFormErrors = {}
-    let isValid = true
-
-    if (!memoryForm.title.trim()) {
-      errors.title = 'Title is required'
-      isValid = false
-    }
-
-    if (!memoryForm.description.trim()) {
-      errors.description = 'Description is required'
-      isValid = false
-    }
-
-    setFormErrors(errors)
-    return isValid
-  }
+  }, [user?.id, search, sort, order])
 
   useEffect(() => {
-    const fetchMemories = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await api.getMemories(user?.id || '')
-        setMemories(data)
-      } catch (err) {
-        setError('Failed to load memories')
-        console.error('Error fetching memories:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     if (user?.id) {
       fetchMemories()
     }
-  }, [user?.id])
+  }, [user?.id, search, sort, order, fetchMemories])
 
-  const handleSaveMemory = async () => {
-    if (!validateForm()) {
-      return
-    }
+  const handleOpenDialog = (memory?: Memory) => {
+    setEditingMemory(memory || null)
+    setOpenMemoryModal(true)
+  }
 
-    try {
-      const imageUrl = getRandomImage(selectedCategory)
-      const timestamp = new Date().toISOString()
+  const handleCloseDialog = () => {
+    setOpenMemoryModal(false)
+    setEditingMemory(null)
+  }
 
-      const memoryData = {
-        ...memoryForm,
-        image_url: imageUrl,
-        timestamp,
-        tags,
-      }
-
-      if (editingMemory) {
-        // Update existing memory
-        await api.updateMemory(editingMemory.id, memoryData)
-
-        setMemories(
-          memories.map((memory) =>
-            memory.id === editingMemory.id
-              ? {
-                  ...memory,
-                  ...memoryForm,
-                  image_url: imageUrl,
-                  timestamp,
-                  tags,
-                }
-              : memory,
-          ),
-        )
-      } else {
-        // Add new memory
-        await api.createMemory({
-          user_id: user?.id || '',
-          ...memoryData,
-        })
-
-        const data = await api.getMemories(user?.id || '')
-        setMemories(data)
-      }
-      handleCloseDialog()
-    } catch (err) {
-      console.error('Error saving memory:', err)
-      setError('Failed to save memory')
-    }
+  const handleSaveSuccess = () => {
+    fetchMemories()
   }
 
   const handleDeleteClick = (memory: Memory) => {
@@ -193,6 +74,18 @@ export default function Dashboard() {
         setError('Failed to delete memory')
       }
     }
+  }
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(event.target.value)
+  }
+
+  const handleSortChange = (event: SelectChangeEvent<string>) => {
+    setSort(event.target.value as string)
+  }
+
+  const handleOrderChange = (event: SelectChangeEvent<string>) => {
+    setOrder(event.target.value as string)
   }
 
   return (
@@ -216,6 +109,26 @@ export default function Dashboard() {
               Add Memory
             </Button>
           </Box>
+        </Box>
+        <Box
+          sx={{
+            flexDirection: 'row',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 4,
+            gap: 2,
+            borderRadius: 1,
+            flexGrow: 1,
+          }}
+        >
+          <SearchBar search={search} onSearchChange={handleSearchChange} />
+          <SortHandler
+            sort={sort}
+            order={order}
+            onSortChange={handleSortChange}
+            onOrderChange={handleOrderChange}
+          />
         </Box>
 
         {loading ? (
@@ -288,92 +201,12 @@ export default function Dashboard() {
           </Grid>
         )}
 
-        <Dialog
-          open={openDialog}
+        <AddMemoryDialog
+          open={openMemoryModal}
+          memory={editingMemory}
           onClose={handleCloseDialog}
-          maxWidth='sm'
-          fullWidth
-        >
-          <DialogTitle>
-            {editingMemory ? 'Edit Memory' : 'Add New Memory'}
-          </DialogTitle>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin='dense'
-              label='Title'
-              fullWidth
-              value={memoryForm.title}
-              onChange={(e) =>
-                setMemoryForm({ ...memoryForm, title: e.target.value })
-              }
-              error={!!formErrors.title}
-              helperText={formErrors.title}
-              required
-            />
-            <TextField
-              margin='dense'
-              label='Description'
-              fullWidth
-              multiline
-              rows={4}
-              value={memoryForm.description}
-              onChange={(e) =>
-                setMemoryForm({ ...memoryForm, description: e.target.value })
-              }
-              error={!!formErrors.description}
-              helperText={formErrors.description}
-              required
-            />
-            <FormControl fullWidth margin='dense'>
-              <InputLabel>Image Category</InputLabel>
-              <Select
-                value={selectedCategory}
-                label='Image Category'
-                onChange={(e) =>
-                  setSelectedCategory(e.target.value as ImageCategory)
-                }
-              >
-                <MenuItem value='nature'>Nature</MenuItem>
-                <MenuItem value='city'>City</MenuItem>
-                <MenuItem value='people'>People</MenuItem>
-                <MenuItem value='food'>Food</MenuItem>
-              </Select>
-            </FormControl>
-            <Box sx={{ mt: 2 }}>
-              <TextField
-                fullWidth
-                label='Add Tags'
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagInputKeyDown}
-                helperText='Press Enter to add a tag'
-              />
-              {tags.length > 0 && (
-                <Stack
-                  direction='row'
-                  spacing={1}
-                  sx={{ mt: 1, flexWrap: 'wrap', gap: 1 }}
-                >
-                  {tags.map((tag) => (
-                    <Chip
-                      key={tag}
-                      label={tag}
-                      onDelete={() => handleDeleteTag(tag)}
-                      icon={<LocalOffer />}
-                    />
-                  ))}
-                </Stack>
-              )}
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseDialog}>Cancel</Button>
-            <Button onClick={handleSaveMemory} variant='contained'>
-              {editingMemory ? 'Save Changes' : 'Add Memory'}
-            </Button>
-          </DialogActions>
-        </Dialog>
+          onSave={handleSaveSuccess}
+        />
 
         <DeleteConfirmDialog
           open={!!deleteMemory}

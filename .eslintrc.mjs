@@ -28,6 +28,7 @@ export default [
         console: true,
         document: true,
         window: true,
+        navigator: true,
         localStorage: true,
         fetch: true,
         Response: true,

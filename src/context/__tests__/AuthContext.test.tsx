@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { AuthProvider, useAuth } from '../AuthContext'
+import { AuthProvider } from '../authContext'
+import { useAuth } from '../../hooks/useAuth'
 import { ReactNode } from 'react'
 
 // Test component that uses the auth context

@@ -1,4 +1,4 @@
-import { AuthState, User } from '../types/auth'
+import { AuthState, User } from '../services/types'
 
 export type AuthAction =
   | { type: 'LOGIN_START' }

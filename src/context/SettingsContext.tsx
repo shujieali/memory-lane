@@ -1,5 +1,5 @@
 import { useEffect, useState, ReactNode } from 'react'
-import { AppSettings, defaultSettings } from '../types/settings'
+import { AppSettings, defaultSettings } from './types'
 import { deepMerge, DeepPartial } from '../utils/deepMerge'
 import { loadSettings, saveSettings } from './settingsUtils'
 import { SettingsContext } from './contexts'

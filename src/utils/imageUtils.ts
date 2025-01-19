@@ -35,6 +35,8 @@ export const getRandomImage = (category?: ImageCategory) => {
   return images[Math.floor(Math.random() * images.length)]
 }
 
+export const getDefaultImage = () => getRandomImage()
+
 export const validateImageUrl = async (url: string): Promise<boolean> => {
   try {
     const response = await fetch(url, { method: 'HEAD' })
@@ -43,12 +45,4 @@ export const validateImageUrl = async (url: string): Promise<boolean> => {
   } catch {
     return false
   }
-}
-
-export const getDefaultImage = () => placeholderImages.nature[0]
-
-export const getImageCategory = (url: string): ImageCategory | undefined => {
-  return (
-    Object.entries(placeholderImages) as [ImageCategory, readonly string[]][]
-  ).find(([_, images]) => images.includes(url))?.[0]
 }

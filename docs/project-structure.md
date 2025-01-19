@@ -11,41 +11,132 @@ The project is organized into two main parts:
 
 ```
 memory-lane/
-├── src/                    # Frontend source code (ES Modules)
-│   ├── assets/            # Static assets
-│   ├── components/        # Reusable React components
-│   │   ├── MemoryCard     # Memory card component with image loading
-│   │   └── DeleteConfirmDialog # Confirmation dialog for deletions
-│   ├── context/          # React Context providers and definitions
-│   │   ├── contexts      # Shared context definitions
-│   │   ├── AuthContext   # Authentication state management
-│   │   └── SettingsContext # User preferences management
-│   ├── hooks/           # Custom React hooks
-│   │   ├── useAuth      # Authentication hook
-│   │   └── useSettings  # Settings management hook
-│   ├── layouts/          # Layout components
-│   │   └── MainLayout    # Main app layout with responsive drawer
-│   ├── pages/            # Page components
-│   │   ├── Dashboard     # Main dashboard view
-│   │   ├── Memories      # Memories view
-│   │   ├── Settings      # User settings
-│   │   ├── Login         # Login page
-│   │   └── Signup        # Registration page
-│   ├── services/         # API service layer
-│   │   ├── api          # Memory CRUD operations
-│   │   └── auth         # Authentication services
-│   ├── theme/           # Theme configuration
-│   ├── types/           # TypeScript type definitions
-│   ├── utils/           # Utility functions
+├── docs/                    # Project documentation
+│   ├── assessment.md       # Original job assessment requirements
+│   ├── deployment.md       # Deployment and hosting guide
+│   ├── development-workflow.md # Development practices
+│   ├── module-systems.md   # Module configuration
+│   ├── project-structure.md # This file
+│   └── technical-decisions.md # Architecture decisions log
+├── public/                 # Static public assets
+│   ├── icons/             # Application icons
+│   │   ├── icon-192x192.png  # PWA icons
+│   │   ├── icon-512x512.png
+│   │   ├── memorylane.ico
+│   │   └── memorylane.png
+│   ├── manifest.json      # PWA manifest
+│   └── sw.js             # Service worker
+├── scripts/               # Build and utility scripts
+│   └── generate-pwa-icons.mjs # PWA icon generation
+├── server/                # Backend source code (CommonJS)
+│   ├── api.js            # Express app setup
+│   ├── controllers/      # Route controllers
+│   │   ├── authController.js    # Authentication logic
+│   │   ├── emailController.js   # Email notifications
+│   │   ├── fileController.js    # File upload handling
+│   │   ├── memoryController.js  # Memory operations
+│   │   ├── seoController.js     # SEO optimization
+│   │   └── uploadController.js  # Upload management
+│   ├── middleware/       # Express middleware
+│   │   ├── socialBotDetector.js # Bot detection
+│   │   └── staticFiles.js      # Static file serving
+│   ├── routes/          # API route definitions
+│   │   ├── authRoutes.js      # Auth endpoints
+│   │   ├── emailRoutes.js     # Email endpoints
+│   │   ├── memoryRoutes.js    # Memory endpoints
+│   │   ├── socialRoutes.js    # Social sharing
+│   │   └── uploadRoutes.js    # Upload endpoints
+│   ├── services/        # Business logic services
+│   │   └── storage/     # Storage providers
+│   │       ├── GCPStorageProvider.js  # Google Cloud Storage
+│   │       ├── LocalStorageProvider.js # Local filesystem
+│   │       ├── S3StorageProvider.js   # AWS S3
+│   │       ├── StorageFactory.js      # Provider factory
+│   │       └── StorageProvider.js     # Base interface
+│   └── utils/           # Utility functions
+│       ├── auth.js      # Authentication helpers
+│       ├── db.js        # Database operations
+│       └── validation.js # Input validation
+├── src/                  # Frontend source code (ES Modules)
 │   ├── App.tsx          # Main React component
-│   └── main.tsx         # Application entry point
-├── server/              # Backend source code (CommonJS)
-│   ├── api.js           # Express API with JWT auth
-│   └── package.json     # Backend-specific dependencies
-├── public/              # Public static files
-├── docs/               # Project documentation
-├── .env               # Environment configuration
-└── [Other config files]
+│   ├── assets/          # Frontend assets
+│   │   └── anonymous.svg # Anonymous user icon
+│   ├── components/      # Reusable components
+│   │   ├── AppHeader/   # Application header
+│   │   ├── DeleteConfirmDialog/ # Delete confirmation
+│   │   ├── ImageUploader/      # Image upload UI
+│   │   ├── NavigationDrawer/   # Side navigation
+│   │   ├── ScrollIndicator/    # Scroll position
+│   │   ├── Search/            # Search functionality
+│   │   ├── Sort/             # Sorting controls
+│   │   ├── StatusIndicator/  # Online/offline status
+│   │   ├── Transitions/      # Animation components
+│   │   └── UploadArea/       # Drag-drop upload
+│   ├── context/         # React contexts
+│   │   ├── __tests__/  # Context tests
+│   │   ├── authContext.tsx    # Auth state
+│   │   ├── settingsContext.tsx # User settings
+│   │   └── shareContext.tsx   # Sharing state
+│   ├── features/        # Feature modules
+│   │   ├── memories/    # Memory management
+│   │   │   ├── components/    # Memory components
+│   │   │   └── types/        # Memory types
+│   │   └── share/      # Sharing functionality
+│   │       ├── components/    # Share components
+│   │       └── types/        # Share types
+│   ├── hooks/          # Custom React hooks
+│   │   ├── useAuth.ts        # Auth hook
+│   │   ├── useOfflineDetection.ts # Offline state
+│   │   ├── useScrollDetection.ts  # Scroll position
+│   │   └── useShare.ts      # Share functionality
+│   ├── layouts/        # Layout components
+│   │   ├── MainLayout.tsx   # Main app layout
+│   │   └── PublicLayout.tsx # Public pages layout
+│   ├── pages/          # Page components
+│   │   ├── Dashboard.tsx    # Main dashboard
+│   │   ├── Login.tsx       # Login page
+│   │   ├── Memories.tsx    # Memories list
+│   │   ├── MemoryDetail.tsx # Single memory
+│   │   ├── Offline.tsx     # Offline state
+│   │   ├── PublicMemory.tsx # Shared memory
+│   │   ├── Settings.tsx    # User settings
+│   │   └── Surprise.tsx    # Random memory
+│   ├── Routes/         # Routing configuration
+│   │   ├── AppRoutes.tsx   # Route definitions
+│   │   ├── guards.tsx      # Route protection
+│   │   └── utils.ts       # Routing utilities
+│   ├── services/       # API services
+│   │   ├── api.ts         # API client
+│   │   └── auth.ts        # Auth service
+│   ├── theme/          # UI theming
+│   │   ├── components.ts   # Component styles
+│   │   ├── palette.ts     # Color schemes
+│   │   └── typography.ts  # Text styles
+│   ├── types/          # TypeScript types
+│   │   ├── memory.ts      # Memory types
+│   │   ├── user.ts        # User types
+│   │   └── ...           # Other type definitions
+│   └── utils/          # Utility functions
+│       ├── apiUtils.ts    # API helpers
+│       ├── imageUtils.ts  # Image processing
+│       └── __tests__/    # Utility tests
+└── [Configuration Files]
+    ├── .editorconfig     # Editor settings
+    ├── .env.production   # Production env vars
+    ├── .eslintrc.cjs    # Backend ESLint
+    ├── .eslintrc.mjs    # Frontend ESLint
+    ├── .gitignore       # Git ignore rules
+    ├── .npmrc           # npm configuration
+    ├── .nvmrc           # Node version
+    ├── .prettierrc      # Code formatting
+    ├── .tool-versions   # ASDF version manager
+    ├── commitlint.config.mjs # Commit message rules
+    ├── example.env      # Environment template
+    ├── jest.config.js   # Test configuration
+    ├── package.json     # Project manifest
+    ├── tsconfig.json    # TypeScript config
+    ├── tsconfig.node.json # Node TypeScript
+    └── vite.config.mjs  # Vite configuration
 ```
 
 ## Key Features
@@ -61,10 +152,14 @@ memory-lane/
 - **Memory Management**:
 
   - Create, read, update, delete memories
-  - Image loading states
+  - Multi-image support with carousel
+  - Drag-and-drop file uploads
+  - Upload progress indicators
   - Favorite memories
   - Tags support
   - Responsive grid layout
+  - Infinite scroll pagination
+  - Search and filtering
 
 - **User Interface**:
 
@@ -74,6 +169,7 @@ memory-lane/
   - Compact view mode
   - Customizable grid layout
   - Show/hide dates and tags
+  - Toast notifications
 
 - **Settings**:
   - Theme preferences
@@ -92,6 +188,15 @@ memory-lane/
   - Input validation
   - User ownership verification
 
+- **Storage System**:
+
+  - Multiple storage provider support
+  - AWS S3 integration
+  - Google Cloud Storage
+  - Local file system storage
+  - Factory pattern for provider selection
+  - CDN support
+
 - **Database**:
 
   - SQLite with foreign key constraints
@@ -105,16 +210,42 @@ memory-lane/
   - User authentication
   - Tag management
   - Favorites system
+  - Social sharing
 
 ## Configuration
 
 ### Environment Variables (.env)
 
 ```
-PORT=4001                 # Server port
-JWT_SECRET=xxx           # JWT signing key
-CORS_ORIGIN=xxx         # Allowed frontend origin
-DB_PATH=memories.db     # SQLite database path
+# Server Configuration
+PORT=4001                # Server port
+JWT_SECRET=xxx          # JWT signing key
+CORS_ORIGIN=xxx        # Allowed frontend origin
+BASE_URL=xxx           # Backend base URL
+FRONTEND_URL=xxx       # Frontend base URL
+
+# Storage Configuration
+STORAGE_TYPE=local     # Storage provider (local/s3/gcp)
+
+# Local Storage Configuration
+LOCAL_STORAGE_PATH=uploads  # Local storage directory
+
+# AWS S3 Configuration
+AWS_ACCESS_KEY_ID=xxx     # AWS access key
+AWS_SECRET_ACCESS_KEY=xxx # AWS secret key
+AWS_REGION=xxx           # AWS region
+S3_BUCKET_NAME=xxx       # S3 bucket name
+S3_MAX_CONTENT_SIZE=xxx  # Max upload size (bytes)
+MEDIA_CDN_URL=xxx        # Optional CDN URL
+
+# Google Cloud Storage Configuration
+GCP_PROJECT_ID=xxx       # GCP project ID
+GCP_KEY_FILE=xxx        # Service account key file path
+GCP_BUCKET_NAME=xxx     # GCS bucket name
+
+# Email Configuration
+SENDGRID_API_KEY=xxx    # SendGrid API key
+FROM_EMAIL=xxx          # Sender email address
 ```
 
 ### Development Tools
@@ -125,6 +256,7 @@ DB_PATH=memories.db     # SQLite database path
   - Prettier for formatting
   - TypeScript for type safety
   - Jest and React Testing Library
+  - EditorConfig for consistency
 
 - **State Management**:
 
