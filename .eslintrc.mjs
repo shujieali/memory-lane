@@ -45,6 +45,7 @@ export default [
         expect: true,
         beforeEach: true,
         afterEach: true,
+        caches: true,
       },
     },
     plugins: {
