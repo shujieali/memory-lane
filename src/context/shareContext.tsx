@@ -7,7 +7,6 @@ export function ShareProvider({ children }: { children: ReactNode }) {
   const [share, setShare] = useState<ShareMemoryPayload | null>(null)
   const onClose = () => setShare(null)
   const shareMemory = async (share: ShareMemoryPayload): Promise<void> => {
-    console.log('Sharing memory', share)
     setShare(share)
   }
   return (

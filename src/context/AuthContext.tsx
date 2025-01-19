@@ -13,8 +13,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const user = JSON.parse(storedUser)
         dispatch({ type: 'LOGIN_SUCCESS', payload: user })
-      } catch (error) {
-        console.log(error)
+      } catch {
         // If stored data is invalid, clear it
         localStorage.removeItem('user')
         localStorage.removeItem('token')

@@ -20,11 +20,8 @@ export default function Surprise() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  console.log('Surprise component rendered')
-
   useEffect(() => {
     const fetchRandomMemories = async () => {
-      console.log('Fetching random memories')
       try {
         setLoading(true)
         setError(null)

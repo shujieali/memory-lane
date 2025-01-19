@@ -29,7 +29,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Don't cache API requests
-  if (event.request.url.includes('/4001/')) {
+  if (event.request.url.includes('api')) {
     return
   }
 

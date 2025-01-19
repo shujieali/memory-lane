@@ -16,12 +16,6 @@ export default function PublicMemory() {
   const [loading, setLoading] = useState(true)
   const isInternalNavigation = location.state?.from
 
-  if (isInternalNavigation) {
-    console.log('User navigated from within the application')
-  } else {
-    console.log('User navigated from an external source')
-  }
-
   useEffect(() => {
     const fetchMemory = async () => {
       try {
