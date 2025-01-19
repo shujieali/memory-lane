@@ -1,5 +1,80 @@
 # Technical Decisions Log
 
+## Testing Infrastructure (2025-01-20)
+
+### Context
+
+Need to implement comprehensive testing strategy covering unit tests, integration tests, and E2E tests.
+
+### Decisions
+
+1. Unit Testing Setup:
+
+   - Jest for both frontend and backend
+   - React Testing Library for components
+   - Separate configurations for frontend/backend
+   - 80% coverage requirement
+   - Reason: Comprehensive test coverage with standard tools
+
+2. E2E Testing:
+
+   - Playwright for browser automation
+   - Multiple browser support (Chrome, Firefox, Safari)
+   - Test recording and debugging capabilities
+   - Visual testing support
+   - Reason: Reliable end-to-end testing with good developer experience
+
+3. CI Integration:
+   - Separate jobs for unit and E2E tests
+   - Test artifacts and reports storage
+   - Coverage reporting
+   - Browser installation caching
+   - Reason: Efficient and informative CI pipeline
+
+### Consequences
+
+- Better code quality assurance
+- Catch issues early in development
+- Reliable deployment process
+- Improved developer confidence
+
+## API Documentation System (2025-01-20)
+
+### Context
+
+Need to provide comprehensive and interactive API documentation for developers.
+
+### Decisions
+
+1. Documentation Tool:
+
+   - Swagger/OpenAPI for API documentation
+   - Interactive UI at /api-docs endpoint
+   - Auto-generated from code comments
+   - Reason: Industry standard with good developer experience
+
+2. Documentation Structure:
+
+   - Grouped by feature areas
+   - Full request/response examples
+   - Authentication details included
+   - Schema definitions
+   - Reason: Organized and complete documentation
+
+3. Integration Method:
+   - swagger-jsdoc for comment parsing
+   - swagger-ui-express for UI
+   - Route-level documentation
+   - Type definitions included
+   - Reason: Maintainable documentation close to code
+
+### Consequences
+
+- Better developer experience
+- Self-documenting API
+- Easier API testing
+- Up-to-date documentation
+
 ## Production Deployment Architecture (2025-03-21)
 
 ### Context
@@ -30,7 +105,6 @@ Need to establish a robust and maintainable production deployment strategy.
    - Reason: Clean separation between environments
 
 4. Storage Provider Strategy:
-
    - Flexible provider selection per environment
    - CDN integration for production
    - Fallback mechanisms
@@ -213,7 +287,6 @@ Need to improve code organization and fix linting issues across the codebase.
    - Reason: Better error handling and logging capabilities while maintaining code quality
 
 3. Import Path Standardization:
-
    - Updated all context imports to use hooks directory
    - Standardized import paths across components
    - Reason: More consistent and maintainable import structure
@@ -250,7 +323,6 @@ Need to implement secure authentication and data protection for the application.
    - Reason: Protect against common security threats
 
 3. Database Security:
-
    - Foreign key constraints
    - User ownership verification
    - Indexed queries for performance
@@ -287,7 +359,6 @@ Need to implement a responsive UI with proper state management and user preferen
    - Reason: Simple but effective state management
 
 3. Settings Management:
-
    - Theme preferences (light/dark)
    - Display settings (compact view)
    - Layout options (cards per row)
@@ -325,7 +396,6 @@ Need to implement comprehensive memory management with good UX.
    - Reason: Better presentation of memories
 
 3. Memory Operations:
-
    - CRUD operations with optimistic updates
    - Confirmation dialogs for destructive actions
    - Error handling and feedback
