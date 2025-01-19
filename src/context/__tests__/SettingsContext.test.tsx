@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { SettingsProvider } from '../settingsContext'
+import { SettingsProvider } from '../SettingsContext'
 import { useSettings } from '../../hooks/useSettings'
 import { defaultSettings } from '../types'
 import { ReactNode } from 'react'
