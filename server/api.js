@@ -4,6 +4,7 @@ const cors = require('cors')
 const rateLimit = require('express-rate-limit')
 const multer = require('multer')
 const setupStaticFiles = require('./middleware/staticFiles')
+const swagger = require('./swagger')
 const authRoutes = require('./routes/authRoutes')
 const memoryRoutes = require('./routes/memoryRoutes')
 const uploadRoutes = require('./routes/uploadRoutes')
@@ -22,6 +23,9 @@ app.use(
   }),
 )
 app.use(express.json())
+
+// Swagger API Documentation
+app.use('/api-docs', swagger.serve, swagger.setup)
 
 // Configure multer for local storage if using local provider
 if (process.env.STORAGE_TYPE === 'local') {
@@ -56,7 +60,7 @@ const authLimiter = rateLimit({
 // Routes
 app.use('/auth', authLimiter, authRoutes)
 app.use('/memories', memoryRoutes)
-app.use('/api/storage', uploadRoutes) // Changed route prefix for clarity
+app.use('/api/storage', uploadRoutes)
 app.use('/email', emailRoutes)
 app.use('/social', socialRoutes)
 
@@ -80,4 +84,7 @@ process.on('SIGINT', () => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
   console.log(`Storage provider: ${process.env.STORAGE_TYPE || 'local'}`)
+  console.log(
+    `API Documentation available at http://localhost:${port}/api-docs`,
+  )
 })

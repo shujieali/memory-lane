@@ -5,16 +5,105 @@ const { authenticateToken } = require('../utils/auth')
 
 const router = express.Router()
 
-// Protected routes - require authentication
-router.use(authenticateToken)
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UploadUrlResponse:
+ *       type: object
+ *       properties:
+ *         uploadUrl:
+ *           type: string
+ *           description: Pre-signed URL for file upload
+ *         key:
+ *           type: string
+ *           description: File key/path in storage
+ */
 
-// Generate upload URL
-router.get('/url', getUploadUrl)
+/**
+ * @swagger
+ * /api/storage/url:
+ *   get:
+ *     summary: Get a pre-signed URL for file upload
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Storage]
+ *     responses:
+ *       200:
+ *         description: Upload URL generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UploadUrlResponse'
+ */
+router.get('/url', authenticateToken, getUploadUrl)
 
-// Delete files
-router.post('/delete', deleteFiles)
+/**
+ * @swagger
+ * /api/storage/delete:
+ *   post:
+ *     summary: Delete files from storage
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Storage]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - keys
+ *             properties:
+ *               keys:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of file keys/paths to delete
+ *     responses:
+ *       200:
+ *         description: Files deleted successfully
+ *       400:
+ *         description: Invalid request
+ */
+router.post('/delete', authenticateToken, deleteFiles)
 
-// Handle file upload for local storage
+/**
+ * @swagger
+ * /api/storage/upload:
+ *   post:
+ *     summary: Direct file upload (local storage only)
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Storage]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - file
+ *               - key
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *               key:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 fileUrl:
+ *                   type: string
+ */
 const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
     if (process.env.STORAGE_TYPE === 'local') {
@@ -37,10 +126,8 @@ const upload = multer({
   },
 })
 
-// Handle direct file upload (only used by local storage)
 router.post('/upload', upload.single('file'), (req, res) => {
   try {
-    // Return the full URL to the uploaded file
     const baseUrl =
       process.env.BASE_URL || `http://localhost:${process.env.PORT || 4001}`
     const fileUrl = `${baseUrl}/uploads/${req.body.key}`
