@@ -1,12 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { debounce } from 'lodash'
-import {
-  Box,
-  Container,
-  Typography,
-  Paper,
-  CircularProgress,
-} from '@mui/material'
+import { Box, Container, Typography, Paper } from '@mui/material'
 import { SelectChangeEvent } from '@mui/material/Select'
 import { useAuth } from '../hooks'
 import { api } from '../services/api'
@@ -161,7 +155,6 @@ export default function Memories() {
         </Box>
 
         <MemoryLane memories={memories} loading={loading} error={error || ''} />
-        {loading && <CircularProgress />}
         {!hasMore && (
           <Typography variant='body2' color='text.secondary' align='center'>
             No more memories to load

@@ -23,17 +23,19 @@ self.addEventListener('install', (event) => {
 
 // Serve cached content when offline
 self.addEventListener('fetch', (event) => {
-  // Don't cache API requests - pass through directly to network
+  // Handle API requests and non-GET methods - pass through directly to network
   if (
-    event.request.method === 'POST' ||
-    event.request.method === 'PUT' ||
-    event.request.method === 'DELETE' ||
-    event.request.method === 'PATCH' ||
-    event.request.method === 'OPTIONS' ||
+    event.request.method !== 'GET' ||
     event.request.url.includes('api') ||
     event.request.url.includes('services')
   ) {
-    return fetch(event.request)
+    event.respondWith(
+      fetch(event.request.clone(), {
+        mode: 'cors',
+        credentials: 'same-origin',
+      }),
+    )
+    return
   }
 
   // Only cache static assets with supported URL schemes
@@ -80,10 +82,18 @@ self.addEventListener('fetch', (event) => {
   }
 })
 
+// Handle skip waiting message from client
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting()
+  }
+})
+
 // Clean up old caches when a new service worker takes over
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     Promise.all([
+      // Clean up old caches
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
@@ -93,7 +103,8 @@ self.addEventListener('activate', (event) => {
           }),
         )
       }),
-      clients.claim(), // Take control of all clients immediately
+      // Take control of all clients immediately
+      clients.claim(),
     ]),
   )
 })
