@@ -16,7 +16,7 @@ const SOCIAL_MEDIA_BOTS = [
 ]
 
 function isSocialMediaBot(userAgent) {
-  return SOCIAL_MEDIA_BOTS.some((bot) =>
+  return exports.SOCIAL_MEDIA_BOTS.some((bot) =>
     userAgent.toLowerCase().includes(bot.toLowerCase()),
   )
 }
@@ -27,4 +27,5 @@ function socialBotDetector(req, res, next) {
   next()
 }
 
+exports.SOCIAL_MEDIA_BOTS = SOCIAL_MEDIA_BOTS
 module.exports = socialBotDetector

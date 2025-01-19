@@ -52,7 +52,7 @@ export default function MemoryCard({
   const { settings } = useSettings()
   const { compactView } = settings.theme
   const { showDates, showTags } = settings.display
-  const publicUrl = `${window.location.origin}${getRoutePathWithParams('publicMemory', { public_id })}`
+  const publicUrl = `${import.meta.env.VITE_API_BASE_URL}/social/memory/${public_id}`
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % image_urls.length)

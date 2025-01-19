@@ -155,7 +155,7 @@ export default function Memories() {
           <ShareButton
             title={`${user?.name}'s Memory Lane`}
             description='Check out my Memory Lane!'
-            url={`${window.location.origin}${getRoutePathWithParams('publicLane', { userId: user?.id || '' })}`}
+            url={`${import.meta.env.VITE_API_BASE_URL}/social/lane/${user?.id}`}
           >
             Share
           </ShareButton>

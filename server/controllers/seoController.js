@@ -1,4 +1,5 @@
 const { getPublicMemory, getPublicMemories } = require('./memoryController')
+const { SOCIAL_MEDIA_BOTS } = require('../middleware/socialBotDetector')
 
 async function generateMetaTags(memory, baseUrl) {
   const title = memory.title
@@ -50,8 +51,7 @@ function generateHtml(metaTags, redirectUrl) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script>
           // Import bot list from socialBotDetector
-          const SOCIAL_MEDIA_BOTS = ${JSON.stringify(require('./middleware/socialBotDetector').SOCIAL_MEDIA_BOTS)};
-
+          const SOCIAL_MEDIA_BOTS = ${SOCIAL_MEDIA_BOTS};
           // Check if current user agent matches any bot
           const isBot = SOCIAL_MEDIA_BOTS.some(bot =>
             navigator.userAgent.toLowerCase().includes(bot.toLowerCase())
@@ -92,7 +92,7 @@ async function handleSocialShare(req, res) {
           .then((data) => resolve(data))
           .catch(() => resolve(null))
       })
-      redirectUrl = `${frontendUrl}/public/memory/${id}`
+      redirectUrl = `${frontendUrl}/shared/memory/${id}`
     } else if (type === 'lane') {
       const mockReq = { params: { user_id: id }, query: {} }
       const mockRes = {
@@ -115,7 +115,7 @@ async function handleSocialShare(req, res) {
         description: `Check out this collection of ${memories.length} memories`,
         image_urls: memories[0]?.image_urls || [],
       }
-      redirectUrl = `${frontendUrl}/public/lane/${id}`
+      redirectUrl = `${frontendUrl}/shared/lane/${id}`
     } else {
       throw new Error('Invalid share type')
     }
