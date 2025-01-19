@@ -11,6 +11,7 @@ export interface RouteConfig {
   access: RouteAccess
   redirectTo?: string
   children?: RouteConfig[]
+  title: string
 }
 
 // Extract the keys from PARAM_REGEX

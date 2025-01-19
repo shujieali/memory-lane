@@ -1,10 +1,25 @@
-import { useReducer, ReactNode } from 'react'
+import { useReducer, ReactNode, useEffect } from 'react'
 import { auth } from '../services/auth'
 import { authReducer, initialState } from './authReducer'
 import { AuthContext } from './contexts'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState)
+
+  // Initialize auth state from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user')
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser)
+        dispatch({ type: 'LOGIN_SUCCESS', payload: user })
+      } catch (error) {
+        // If stored data is invalid, clear it
+        localStorage.removeItem('user')
+        localStorage.removeItem('token')
+      }
+    }
+  }, [])
 
   const login = async (email: string, password: string) => {
     try {

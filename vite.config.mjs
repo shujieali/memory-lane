@@ -12,6 +12,16 @@ export default defineConfig({
     target: 'esnext',
     modulePreload: true,
     outDir: 'dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'ui-vendor': ['@mui/material', '@mui/icons-material'],
+        },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
+      },
+    },
   },
   optimizeDeps: {
     include: ['react', 'react-dom'],

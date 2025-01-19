@@ -1,9 +1,21 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { ComponentType } from 'react'
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { ComponentType, Suspense } from 'react'
 import { RouteGuard } from './guards'
 import { routeConfig } from './config'
 import { ROUTE_PATHS } from './constants'
 import { Helmet } from 'react-helmet'
+import { CircularProgress, Box } from '@mui/material'
+
+const LoadingFallback = () => (
+  <Box
+    display='flex'
+    justifyContent='center'
+    alignItems='center'
+    minHeight='200px'
+  >
+    <CircularProgress />
+  </Box>
+)
 
 // Group routes by layout
 const groupRoutesByLayout = (routes: typeof routeConfig) => {
@@ -26,12 +38,11 @@ const groupRoutesByLayout = (routes: typeof routeConfig) => {
 
 const renderRouteWithGuard = (route: (typeof routeConfig)[0]) => {
   const Component = route.component
-  const pageTitle = Component.name.replace(/Page$/, '')
 
   return (
     <RouteGuard access={route.access} redirectTo={route.redirectTo}>
       <Helmet>
-        <title>{`${pageTitle} | Memory Lane`}</title>
+        <title>{`${route.title} | Memory Lane`}</title>
       </Helmet>
       <Component />
     </RouteGuard>
@@ -42,50 +53,54 @@ const AppRoutes = () => {
   const routeGroups = groupRoutesByLayout(routeConfig)
 
   return (
-    <Routes>
-      {Array.from(routeGroups.entries()).map(([LayoutComponent, routes]) => {
-        if (LayoutComponent === 'none') {
-          // Render routes without layout directly
-          return routes.map((route) => (
+    <Suspense fallback={<LoadingFallback />}>
+      <Routes>
+        {/* Routes without layout */}
+        {routeGroups
+          .get('none')
+          ?.map((route) => (
             <Route
               key={route.path}
               path={route.path}
               element={renderRouteWithGuard(route)}
             />
-          ))
-        }
+          ))}
 
-        // Render routes with layout using nesting
-        return (
-          <Route
-            key={LayoutComponent.name}
-            element={
-              <LayoutComponent>
-                {routes.map((route) => (
-                  <Route
-                    key={route.path}
-                    path={route.path}
-                    element={renderRouteWithGuard(route)}
-                  />
-                ))}
-              </LayoutComponent>
-            }
-          >
-            {routes.map((route) => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={renderRouteWithGuard(route)}
-              />
-            ))}
-          </Route>
-        )
-      })}
-      <Route
-        path='*'
-        element={<Navigate to={ROUTE_PATHS.memories} replace />}
-      />
-    </Routes>
+        {/* Routes with layouts */}
+        {Array.from(routeGroups.entries()).map(([LayoutComponent, routes]) => {
+          if (LayoutComponent === 'none') return null
+
+          const Layout = LayoutComponent as ComponentType<{
+            children: React.ReactNode
+          }>
+
+          return (
+            <Route
+              key={Layout.name}
+              element={
+                <Layout>
+                  <Outlet />
+                </Layout>
+              }
+            >
+              {routes.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={renderRouteWithGuard(route)}
+                />
+              ))}
+            </Route>
+          )
+        })}
+
+        {/* Catch-all route */}
+        <Route
+          path='*'
+          element={<Navigate to={ROUTE_PATHS.memories} replace />}
+        />
+      </Routes>
+    </Suspense>
   )
 }
 

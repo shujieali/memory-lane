@@ -43,7 +43,11 @@ export function authReducer(state: AuthState, action: AuthAction): AuthState {
         isLoading: false,
       }
     case 'LOGOUT':
-      return initialState
+      return {
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+      }
     default:
       return state
   }

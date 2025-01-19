@@ -149,30 +149,32 @@ export default function AppHeader() {
           )}
         </Toolbar>
       </AppBar>
-      <Box
-        component='nav'
-        sx={{
-          width: { sm: settings.theme.drawerOpen ? drawerWidth : 0 },
-          flexShrink: { sm: 0 },
-          transition: theme.transitions.create(['width', 'margin'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-        }}
-      >
-        <NavigationDrawer
-          mobileOpen={mobileOpen}
-          desktopOpen={settings.theme.drawerOpen}
-          onMobileClose={handleDrawerToggle}
-          variant='temporary'
-        />
-        <NavigationDrawer
-          mobileOpen={mobileOpen}
-          desktopOpen={settings.theme.drawerOpen}
-          onMobileClose={toggleDrawer}
-          variant='persistent'
-        />
-      </Box>
+      {user && (
+        <Box
+          component='nav'
+          sx={{
+            width: { sm: settings.theme.drawerOpen ? drawerWidth : 0 },
+            flexShrink: { sm: 0 },
+            transition: theme.transitions.create(['width', 'margin'], {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.enteringScreen,
+            }),
+          }}
+        >
+          <NavigationDrawer
+            mobileOpen={mobileOpen}
+            desktopOpen={settings.theme.drawerOpen}
+            onMobileClose={handleDrawerToggle}
+            variant='temporary'
+          />
+          <NavigationDrawer
+            mobileOpen={mobileOpen}
+            desktopOpen={settings.theme.drawerOpen}
+            onMobileClose={toggleDrawer}
+            variant='persistent'
+          />
+        </Box>
+      )}
     </>
   )
 }
