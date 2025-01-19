@@ -23,14 +23,17 @@ self.addEventListener('install', (event) => {
 
 // Serve cached content when offline
 self.addEventListener('fetch', (event) => {
-  // Don't cache POST requests (like file uploads)
-  if (event.request.method === 'POST') {
-    return
-  }
-
-  // Don't cache API requests
-  if (event.request.url.includes('api')) {
-    return
+  // Don't cache API requests - pass through directly to network
+  if (
+    event.request.method === 'POST' ||
+    event.request.method === 'PUT' ||
+    event.request.method === 'DELETE' ||
+    event.request.method === 'PATCH' ||
+    event.request.method === 'OPTIONS' ||
+    event.request.url.includes('api') ||
+    event.request.url.includes('services')
+  ) {
+    return fetch(event.request)
   }
 
   // Only cache static assets with supported URL schemes
@@ -38,7 +41,8 @@ self.addEventListener('fetch', (event) => {
     event.request.method === 'GET' &&
     (event.request.url.startsWith('http://') ||
       event.request.url.startsWith('https://')) &&
-    event.request.url.match(/\.(js|css|html|png|jpg|jpeg|gif|svg|ico)$/)
+    (event.request.url.match(/\.(js|css|html|png|jpg|jpeg|gif|svg|ico)$/) ||
+      event.request.url.includes('offline'))
   ) {
     event.respondWith(
       caches.match(event.request).then((response) => {
