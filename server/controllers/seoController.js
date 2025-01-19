@@ -1,7 +1,22 @@
+const probe = require('probe-image-size')
 const { getPublicMemory, getPublicMemories } = require('./memoryController')
 const { SOCIAL_MEDIA_BOTS } = require('../middleware/socialBotDetector')
 
-async function generateMetaTags(memory, baseUrl) {
+async function getImageDimensions(imageUrl) {
+  try {
+    const dimensions = await probe(imageUrl)
+    return {
+      width: dimensions.width,
+      height: dimensions.height,
+    }
+  } catch (error) {
+    console.error('Error getting image dimensions:', error)
+    // Return default dimensions
+    return { width: 1200, height: 630 }
+  }
+}
+
+async function generateMetaTags(memory, baseUrl, dimensions) {
   const title = memory.title
   const description = memory.description
 
@@ -12,9 +27,13 @@ async function generateMetaTags(memory, baseUrl) {
   }
 
   return `
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="${title}" />
-    <meta name="description" content="${description}" />
+    <!-- Essential Meta Tags -->
+    <meta property="og:title" content="${title}">
+    <meta property="og:description" content="${description}">
+    <meta property="og:image" content="${imageUrl}">
+    <meta property="og:url" content="[Your-URL-Here]">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Memory Lane">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article" />
@@ -24,8 +43,8 @@ async function generateMetaTags(memory, baseUrl) {
     <meta property="og:image" content="${imageUrl}" />
     <meta property="og:image:secure_url" content="${imageUrl}" />
     <meta property="og:image:type" content="image/jpeg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content="${dimensions.width}" />
+    <meta property="og:image:height" content="${dimensions.height}" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -58,10 +77,9 @@ function generateHtml(metaTags, redirectUrl) {
           ) || navigator.userAgent.toLowerCase().includes('bot');
 
           // Redirect non-bot users to the actual app
-          // temporary stopping redirects
-          // if (!isBot) {
-          //   window.location.href = '${redirectUrl}';
-          // }
+          if (!isBot) {
+            window.location.href = '${redirectUrl}';
+          }
         </script>
       </head>
       <body>
@@ -124,17 +142,15 @@ async function handleSocialShare(req, res) {
     if (!memory) {
       throw new Error('Memory not found')
     }
-
-    const metaTags = await generateMetaTags(memory, baseUrl)
+    const dimensions = await getImageDimensions(memory.image_urls[0])
+    const metaTags = await generateMetaTags(memory, baseUrl, dimensions)
     const html = generateHtml(metaTags, redirectUrl)
 
-    // temporary stopping redirects
-    res.send(html)
-    // if (req.isSocialBot) {
-    //   res.send(html)
-    // } else {
-    //   res.redirect(redirectUrl)
-    // }
+    if (req.isSocialBot) {
+      res.send(html)
+    } else {
+      res.redirect(redirectUrl)
+    }
   } catch (error) {
     console.error('Error in handleSocialShare:', error)
     res.status(404).send('Not found')
