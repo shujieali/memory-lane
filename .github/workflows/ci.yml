@@ -38,6 +38,9 @@ jobs:
 
       - name: Run Jest tests
         run: npm test
+        env:
+          CI: true
+          DB_PATH: memories.db
 
       - name: Build
         run: npm run build
