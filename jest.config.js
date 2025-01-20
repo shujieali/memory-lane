@@ -86,6 +86,7 @@ module.exports = {
           JWT_SECRET: 'test-secret',
           STORAGE_TYPE: 'local',
           LOCAL_STORAGE_PATH: 'uploads',
+          DB_PATH: 'memories.db',
         },
       },
     },

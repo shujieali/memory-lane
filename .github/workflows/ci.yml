@@ -49,6 +49,7 @@ jobs:
         run: npm run test:e2e
         env:
           CI: true
+          DB_PATH: memories.db
 
       - name: Upload test results
         if: always()
