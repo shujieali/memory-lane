@@ -1,3 +1,5 @@
+[![CI](https://github.com/shujieali/memory-lane/actions/workflows/ci.yml/badge.svg)](https://github.com/shujieali/memory-lane/actions/workflows/ci.yml)
+
 # Memory Lane
 
 A web application that allows users to create, manage, and organize their memories with a rich set of features and customizable interface.
