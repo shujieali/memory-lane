@@ -24,6 +24,9 @@ A web application that allows users to create, manage, and organize their memori
   - Responsive grid layout
   - Surprise memories on home page
   - Chronological timeline view
+  - Offline access to memories
+  - Search and filter capabilities
+  - Infinite scroll pagination
 
 - **Storage System**:
 
@@ -43,6 +46,17 @@ A web application that allows users to create, manage, and organize their memori
   - Customizable grid layout
   - Show/hide dates and tags
   - Toast notifications
+  - Progressive Web App (PWA) support
+  - Offline functionality
+  - Add to home screen capability
+
+- **Sharing & Social**:
+
+  - Email sharing system via SendGrid
+  - Anonymous memory viewing
+  - Social media meta tags
+  - Social bot detection
+  - SEO optimization
 
 - **Settings**:
   - Theme preferences
@@ -62,6 +76,7 @@ A web application that allows users to create, manage, and organize their memori
 - [Development Workflow](docs/development-workflow.md) - Setup, tooling, and development practices
 - [Technical Decisions](docs/technical-decisions.md) - Log of architectural and technical decisions
 - [Deployment Guide](docs/deployment.md) - Production deployment instructions
+- [Testing Guide](docs/testing.md) - Testing infrastructure and practices
 
 ## Quick Start
 
@@ -98,6 +113,7 @@ A web application that allows users to create, manage, and organize their memori
    ```
    - Frontend: http://localhost:5173
    - Backend: http://localhost:4001
+   - API Documentation: http://localhost:4001/api-docs
 
 ## Technical Stack
 
@@ -111,6 +127,9 @@ A web application that allows users to create, manage, and organize their memori
 - Centralized context definitions
 - Jest and React Testing Library
 - React Dropzone for file uploads
+- PWA support with service worker
+- Offline functionality
+- SEO optimization
 
 ### Backend
 
@@ -123,6 +142,9 @@ A web application that allows users to create, manage, and organize their memori
 - Multiple storage providers
 - Factory pattern for storage
 - SEO optimization
+- Swagger/OpenAPI documentation
+- SendGrid email integration
+- Social bot detection
 
 ## Development Tools
 
@@ -147,35 +169,44 @@ A web application that allows users to create, manage, and organize their memori
 ### Environment Variables
 
 ```env
+# Frontend
+VITE_API_BASE_URL=http://localhost:4001
+
 # Server Configuration
-PORT=4001                # Server port
-JWT_SECRET=xxx          # JWT signing key
-CORS_ORIGIN=xxx        # Allowed frontend origin
-BASE_URL=xxx           # Backend base URL
-FRONTEND_URL=xxx       # Frontend base URL
+PORT=4001
+CORS_ORIGIN=http://localhost:5173
+API_BASE_URL=http://localhost:4001
+DB_PATH=memories.db
+BASE_URL=http://localhost:4001
+FRONTEND_URL=http://localhost:5173
+
+# JWT Configuration
+JWT_SECRET=your-super-secret-key-change-in-production
 
 # Storage Configuration
-STORAGE_TYPE=local     # Storage provider (local/s3/gcp)
+STORAGE_TYPE=s3 # Options: local, s3, gcp
 
-# Local Storage Configuration
-LOCAL_STORAGE_PATH=uploads  # Local storage directory
+# Local Storage Configuration (if STORAGE_TYPE=local)
+LOCAL_STORAGE_PATH=uploads
 
-# AWS S3 Configuration
-AWS_ACCESS_KEY_ID=xxx     # AWS access key
-AWS_SECRET_ACCESS_KEY=xxx # AWS secret key
-AWS_REGION=xxx           # AWS region
-S3_BUCKET_NAME=xxx       # S3 bucket name
-S3_MAX_CONTENT_SIZE=xxx  # Max upload size (bytes)
-MEDIA_CDN_URL=xxx        # Optional CDN URL
+# CDN URL Configuration
+MEDIA_CDN_URL=your-cdn-url
 
-# Google Cloud Storage Configuration
-GCP_PROJECT_ID=xxx       # GCP project ID
-GCP_KEY_FILE=xxx        # Service account key file path
-GCP_BUCKET_NAME=xxx     # GCS bucket name
+# AWS S3 Configuration (if STORAGE_TYPE=s3)
+AWS_ACCESS_KEY_ID=your-aws-access-key-id
+AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
+AWS_REGION=your-aws-region
+S3_BUCKET_NAME=your-s3-bucket-name
+S3_MAX_CONTENT_SIZE=104857600
+
+# Google Cloud Storage Configuration (if STORAGE_TYPE=gcp)
+GCP_PROJECT_ID=your-project-id
+GCP_KEY_FILE=path/to/service-account-key.json
+GCP_BUCKET_NAME=your-bucket-name
 
 # Email Configuration
-SENDGRID_API_KEY=xxx    # SendGrid API key
-FROM_EMAIL=xxx          # Sender email address
+SENDGRID_API_KEY=your-sendgrid-api-key
+EMAIL_FROM=your-email-from
 ```
 
 ### Build Configuration
@@ -223,16 +254,46 @@ See [Deployment Guide](docs/deployment.md) for detailed instructions on:
 
 ## Testing
 
-- Run all tests:
+The project includes comprehensive testing at multiple levels:
 
-  ```bash
-  npm test
-  ```
+### Unit Tests (Jest)
 
-- Run specific tests:
-  ```bash
-  npm test -- MemoryCard
-  ```
+```bash
+# Run all tests
+npm test
+
+# Run frontend tests only
+npm run test:frontend
+
+# Run backend tests only
+npm run test:backend
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### End-to-End Tests (Playwright)
+
+```bash
+# Run E2E tests
+npm run test:e2e
+
+# Run E2E tests with UI
+npm run test:e2e:ui
+
+# Run E2E tests in debug mode
+npm run test:e2e:debug
+```
+
+### API Documentation & Testing
+
+- Interactive API documentation available at `/api-docs` endpoint
+- Built with Swagger/OpenAPI
+- Includes request/response examples
+- Authentication details
+- Schema definitions
+
+See [Testing Guide](docs/testing.md) for detailed testing documentation.
 
 ## Original Requirements
 
