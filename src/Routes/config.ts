@@ -16,6 +16,30 @@ const PublicMemory = lazy(() => import('../pages/PublicMemory'))
 const PublicMemoryLanePage = lazy(() => import('../pages/PublicMemoryLane'))
 const Offline = lazy(() => import('../pages/Offline'))
 
+const guestRoutes: RouteConfig[] = [
+  {
+    path: ROUTE_PATHS.login,
+    component: Login,
+    access: 'guest',
+    redirectTo: ROUTE_PATHS.memories,
+    title: 'Login',
+  },
+  {
+    path: ROUTE_PATHS.signup,
+    component: Signup,
+    access: 'guest',
+    redirectTo: ROUTE_PATHS.memories,
+    title: 'Signup',
+  },
+  {
+    path: ROUTE_PATHS.root,
+    component: Login,
+    access: 'guest',
+    redirectTo: ROUTE_PATHS.memories,
+    title: 'Login',
+  },
+]
+
 const publicRoutes: RouteConfig[] = [
   {
     path: ROUTE_PATHS.offline,
@@ -37,29 +61,7 @@ const publicRoutes: RouteConfig[] = [
     access: 'public',
     title: 'Memory Lane',
   },
-  {
-    path: ROUTE_PATHS.login,
-    component: Login,
-    access: 'public',
-    redirectTo: ROUTE_PATHS.memories,
-    title: 'Login',
-  },
-  {
-    path: ROUTE_PATHS.signup,
-    component: Signup,
-    access: 'public',
-    redirectTo: ROUTE_PATHS.memories,
-    title: 'Signup',
-  },
-  {
-    path: ROUTE_PATHS.root,
-    component: Login,
-    access: 'public',
-    redirectTo: ROUTE_PATHS.memories,
-    title: 'Login',
-  },
 ]
-
 const privateRoutes: RouteConfig[] = [
   {
     path: ROUTE_PATHS.surprise,
@@ -98,6 +100,11 @@ const privateRoutes: RouteConfig[] = [
   },
 ]
 
+// Wrap guest routes with PublicLayout
+guestRoutes.forEach((route) => {
+  route.layout = PublicLayout
+})
+
 // Wrap public routes with PublicLayout
 publicRoutes.forEach((route) => {
   route.layout = PublicLayout
@@ -108,4 +115,8 @@ privateRoutes.forEach((route) => {
   route.layout = MainLayout
 })
 
-export const routeConfig: RouteConfig[] = [...publicRoutes, ...privateRoutes]
+export const routeConfig: RouteConfig[] = [
+  ...guestRoutes,
+  ...publicRoutes,
+  ...privateRoutes,
+]

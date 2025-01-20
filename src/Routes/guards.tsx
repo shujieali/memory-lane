@@ -24,18 +24,16 @@ export const PublicGuard = ({ children }: GuardProps) => {
   return children
 }
 
-// function PrivateRoute({ children }: { children: React.ReactNode }) {
-//   const { isAuthenticated } = useAuth()
-//   return isAuthenticated ? <>{children}</> : <Navigate to='/login' />
-// }
-
-// function PublicRoute({ children }: { children: React.ReactNode }) {
-//   const { isAuthenticated } = useAuth()
-//   return !isAuthenticated ? <>{children}</> : <Navigate to='/memories' />
-// }
-
-export const GuestGuard = ({ children }: GuardProps) => {
-  return <>{children}</>
+export const GuestGuard = ({
+  children,
+  redirectTo = ROUTE_PATHS.login,
+}: GuardProps) => {
+  const { isAuthenticated } = useAuth()
+  return !isAuthenticated ? (
+    <>{children}</>
+  ) : (
+    <Navigate to={redirectTo} replace />
+  )
 }
 
 export const RouteGuard = ({
@@ -49,7 +47,7 @@ export const RouteGuard = ({
     case 'public':
       return <PublicGuard redirectTo={redirectTo}>{children}</PublicGuard>
     case 'guest':
-      return <GuestGuard>{children}</GuestGuard>
+      return <GuestGuard redirectTo={redirectTo}>{children}</GuestGuard>
     default:
       return <>{children}</>
   }
