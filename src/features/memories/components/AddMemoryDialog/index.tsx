@@ -31,6 +31,7 @@ const emptyMemory: MemoryFormState = {
   description: '',
   tags: [],
   image_urls: [],
+  timestamp: new Date().toISOString(),
 }
 
 interface SaveProgress {
@@ -66,6 +67,7 @@ export default function MemoryDialog({
         description: memory.description,
         tags: memory.tags || [],
         image_urls: memory.image_urls || [],
+        timestamp: memory.timestamp,
       })
       setFiles(
         memory.image_urls?.map((url) => ({
@@ -130,7 +132,7 @@ export default function MemoryDialog({
       return
     }
 
-    const timestamp = new Date().toISOString()
+    const timestamp = memoryForm.timestamp || new Date().toISOString()
     const progressInterval = window.setInterval(() => {
       setSaveProgress((prev) => ({
         ...prev,

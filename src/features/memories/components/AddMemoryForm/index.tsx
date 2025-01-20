@@ -1,6 +1,10 @@
 import { useState, KeyboardEvent } from 'react'
 import { TextField, Box, Chip, Stack } from '@mui/material'
 import LocalOffer from '@mui/icons-material/LocalOffer'
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs'
 import { MemoryFormErrors, MemoryFormState } from '../../../../types/memory'
 
 interface MemoryFormFieldsProps {
@@ -56,7 +60,7 @@ const MemoryFormFields = ({
         label='Description'
         fullWidth
         multiline
-        rows={6}
+        rows={4}
         value={memoryForm.description || ''}
         onChange={(e) =>
           setMemoryForm({ ...memoryForm, description: e.target.value })
@@ -65,6 +69,21 @@ const MemoryFormFields = ({
         helperText={formErrors.description}
         required
       />
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DateTimePicker
+          label='Memory Date & Time'
+          value={memoryForm.timestamp ? dayjs(memoryForm.timestamp) : dayjs()}
+          onChange={(date) => {
+            if (date) {
+              setMemoryForm({
+                ...memoryForm,
+                timestamp: date.toISOString(),
+              })
+            }
+          }}
+          sx={{ mt: 2, width: '100%' }}
+        />
+      </LocalizationProvider>
       <Box sx={{ mt: 2, maxWidth: 400 }}>
         <TextField
           fullWidth

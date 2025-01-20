@@ -21,5 +21,5 @@ export interface MemoryFormErrors {
 }
 
 export type MemoryFormState = Partial<
-  Pick<Memory, 'title' | 'description' | 'tags' | 'image_urls'>
+  Pick<Memory, 'title' | 'description' | 'tags' | 'image_urls' | 'timestamp'>
 >
