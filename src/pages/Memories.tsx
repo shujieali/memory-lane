@@ -9,6 +9,7 @@ import Sort from '../components/Sort'
 import { ShareButton } from '../features/share'
 import { Memory } from '../types/memory'
 import MemoryLane from '../features/memories/components/MemoryLane'
+import { getApiBaseUrl } from '../services/config'
 
 export default function Memories() {
   const { user } = useAuth()
@@ -148,7 +149,7 @@ export default function Memories() {
           <ShareButton
             title={`${user?.name}'s Memory Lane`}
             description='Check out my Memory Lane!'
-            url={`${import.meta.env.VITE_API_BASE_URL}/social/lane/${user?.id}`}
+            url={`${getApiBaseUrl()}/social/lane/${user?.id}`}
           >
             Share
           </ShareButton>

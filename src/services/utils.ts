@@ -15,3 +15,9 @@ export const withAuth = (headers: HeadersInit = {}) => {
     Authorization: token ? `Bearer ${token}` : '',
   }
 }
+
+// Get headers with auth token
+export const getHeaders = () => {
+  const headers = { 'Content-Type': 'application/json' }
+  return withAuth(headers)
+}

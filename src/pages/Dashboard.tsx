@@ -1,5 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Box, Typography, Button, Grid, Container, Paper } from '@mui/material'
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Container,
+  Paper,
+  Fab,
+  Zoom,
+  styled,
+} from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { useAuth } from '../hooks'
 import { useSettings } from '../hooks'
@@ -11,6 +21,44 @@ import SortHandler from '../components/Sort'
 import { AddMemoryDialog } from '../features/memories'
 import { Memory } from '../types/memory'
 import { SelectChangeEvent } from '@mui/material/Select'
+
+const StyledFab = styled(Fab)(({ theme }) => ({
+  position: 'fixed',
+  bottom: theme.spacing(4),
+  right: theme.spacing(4),
+  width: 56,
+  minWidth: 56,
+  borderRadius: 28,
+  display: 'flex',
+  justifyContent: 'center',
+  alignContent: 'center',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  '& .MuiSvgIcon-root': {
+    transition: 'margin 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  '&:hover': {
+    width: 'auto',
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(3),
+    borderRadius: 16,
+    justifyContent: 'flex-start',
+    '& .MuiSvgIcon-root': {
+      marginRight: theme.spacing(1),
+    },
+  },
+}))
+
+const FabText = styled('span')({
+  opacity: 0,
+  transform: 'translateX(-8px)',
+  display: 'none',
+  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  '.MuiFab-root:hover &': {
+    display: 'block',
+    opacity: 1,
+    transform: 'translateX(0)',
+  },
+})
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -100,16 +148,8 @@ export default function Dashboard() {
           }}
         >
           <Typography variant='h4'>Welcome, {user?.name || 'User'}!</Typography>
-          <Box>
-            <Button
-              variant='contained'
-              startIcon={<Add />}
-              onClick={() => handleOpenDialog()}
-            >
-              Add Memory
-            </Button>
-          </Box>
         </Box>
+
         <Box
           sx={{
             flexDirection: 'row',
@@ -214,6 +254,17 @@ export default function Dashboard() {
           onClose={() => setDeleteMemory(null)}
           onConfirm={handleConfirmDelete}
         />
+
+        <Zoom in={!openMemoryModal}>
+          <StyledFab
+            color='primary'
+            onClick={() => handleOpenDialog()}
+            aria-label='add memory'
+          >
+            <Add />
+            <FabText>Add Memory</FabText>
+          </StyledFab>
+        </Zoom>
       </Box>
     </Container>
   )

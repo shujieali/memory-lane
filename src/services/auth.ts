@@ -1,5 +1,7 @@
 import { User, LoginCredentials, RegisterCredentials } from './types'
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || window.location.origin
+import { getApiBaseUrl } from './config'
+
+const API_BASE_URL = getApiBaseUrl()
 
 export const auth = {
   async login({ email, password }: LoginCredentials): Promise<User> {
@@ -42,5 +44,11 @@ export const auth = {
     const { user, token } = await response.json()
     localStorage.setItem('token', token)
     return user
+  },
+
+  logout: () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    return Promise.resolve()
   },
 }

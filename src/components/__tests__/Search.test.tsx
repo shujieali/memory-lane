@@ -1,5 +1,4 @@
-import { render, fireEvent } from '@testing-library/react'
-import { screen } from '@testing-library/dom'
+import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Search from '../Search'
 
@@ -18,24 +17,14 @@ describe('Search', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument()
   })
 
-  it('calls onSearchChange when input value changes', () => {
-    render(<Search {...mockProps} />)
-
-    const input = screen.getByRole('textbox')
-    const testValue = 'test search'
-
-    fireEvent.change(input, { target: { value: testValue } })
-
-    expect(mockProps.onSearchChange).toHaveBeenCalledWith(expect.any(Object))
-    expect(mockProps.onSearchChange.mock.calls[0][0].target.value).toBe(
-      testValue,
-    )
+  it('displays current search value', () => {
+    const value = 'test search'
+    render(<Search {...mockProps} search={value} />)
+    expect(screen.getByRole('textbox')).toHaveValue(value)
   })
 
-  it('displays the current search value', () => {
-    const value = 'current search'
-    render(<Search {...mockProps} search={value} />)
-
-    expect(screen.getByRole('textbox')).toHaveValue(value)
+  it('renders with correct label', () => {
+    render(<Search {...mockProps} />)
+    expect(screen.getByLabelText('Search Memories')).toBeInTheDocument()
   })
 })

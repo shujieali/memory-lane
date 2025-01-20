@@ -46,6 +46,7 @@ export default [
         beforeEach: true,
         afterEach: true,
         caches: true,
+        process: true,
       },
     },
     plugins: {

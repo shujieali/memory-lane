@@ -5,17 +5,25 @@ module.exports = {
       displayName: 'frontend',
       preset: 'ts-jest',
       testEnvironment: 'jsdom',
-      setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+      setupFilesAfterEnv: [
+        '@testing-library/jest-dom',
+        '<rootDir>/src/test/setup.ts',
+      ],
       moduleNameMapper: {
         '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
         '\\.(jpg|jpeg|png|gif|webp|svg)$':
           '<rootDir>/src/__mocks__/fileMock.ts',
+        '^virtual:env$': '<rootDir>/src/__mocks__/virtualEnv.ts',
       },
       transform: {
         '^.+\\.tsx?$': [
           'ts-jest',
           {
             tsconfig: 'tsconfig.json',
+            useESM: true,
+            diagnostics: {
+              ignoreCodes: [1343], // Ignore import.meta errors
+            },
           },
         ],
       },
@@ -23,6 +31,7 @@ module.exports = {
         '<rootDir>/src/**/__tests__/**/*.{ts,tsx}',
         '<rootDir>/src/**/*.{spec,test}.{ts,tsx}',
       ],
+      moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
       coverageThreshold: {
         global: {
           branches: 80,
@@ -37,6 +46,15 @@ module.exports = {
         '!src/main.tsx',
         '!src/vite-env.d.ts',
       ],
+      testEnvironmentOptions: {
+        url: 'http://localhost:3000',
+        customExportConditions: ['node', 'node-addons'],
+        env: {
+          NODE_ENV: 'test',
+          VITE_API_BASE_URL: 'http://localhost:3000',
+        },
+      },
+      setupFiles: ['<rootDir>/src/test/setup.ts'],
     },
     {
       displayName: 'backend',
@@ -72,7 +90,6 @@ module.exports = {
       },
     },
   ],
-  // Global config for both projects
   verbose: true,
   clearMocks: true,
   resetMocks: false,

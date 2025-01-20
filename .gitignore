@@ -26,3 +26,7 @@ dist-ssr
 
 *.db
 *.sqlite
+
+# playwright
+playwright-report/
+test-results/

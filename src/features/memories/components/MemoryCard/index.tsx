@@ -26,7 +26,7 @@ import { ShareButton } from '../../../share'
 import { useSettings } from '../../../../hooks'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { getRoutePathWithParams } from '../../../../Routes/utils'
-
+import { getApiBaseUrl } from '../../../../services/config'
 import { MemoryCardProps } from './types'
 
 export default function MemoryCard({
@@ -52,7 +52,7 @@ export default function MemoryCard({
   const { settings } = useSettings()
   const { compactView } = settings.theme
   const { showDates, showTags } = settings.display
-  const publicUrl = `${import.meta.env.VITE_API_BASE_URL}/social/memory/${public_id}`
+  const publicUrl = `${getApiBaseUrl()}/social/memory/${public_id}`
 
   const handleNextImage = () => {
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % image_urls.length)
@@ -72,6 +72,7 @@ export default function MemoryCard({
       state: { from: location.pathname },
     })
   }
+
   const renderTags = () => {
     if (!showTags || !tags?.length) return null
     return (

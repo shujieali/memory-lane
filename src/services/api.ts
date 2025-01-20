@@ -2,9 +2,10 @@ import axios, { AxiosProgressEvent } from 'axios'
 import { Memory } from '../types/memory'
 import { User } from '../types/user'
 import { FileProgress, CreateMemoryPayload, UpdateMemoryPayload } from './types'
-import { handleUnauthorized, withAuth } from '../utils/apiUtils'
+import { handleUnauthorized, withAuth, getHeaders } from './utils'
+import { getApiBaseUrl } from './config'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || window.location.origin
+const API_BASE_URL = getApiBaseUrl()
 
 export const api = {
   async getMemories(
@@ -51,9 +52,7 @@ export const api = {
   async deleteFiles(fileUrls: string[]): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/api/storage/delete`, {
       method: 'POST',
-      headers: withAuth({
-        'Content-Type': 'application/json',
-      }),
+      headers: getHeaders(),
       body: JSON.stringify({ fileUrls }),
     })
     await handleUnauthorized(response)
@@ -115,9 +114,7 @@ export const api = {
   async createMemory(payload: CreateMemoryPayload): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/memories`, {
       method: 'POST',
-      headers: withAuth({
-        'Content-Type': 'application/json',
-      }),
+      headers: getHeaders(),
       body: JSON.stringify(payload),
     })
     await handleUnauthorized(response)
@@ -129,9 +126,7 @@ export const api = {
   async updateMemory(id: string, payload: UpdateMemoryPayload): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/memories/${id}`, {
       method: 'PUT',
-      headers: withAuth({
-        'Content-Type': 'application/json',
-      }),
+      headers: getHeaders(),
       body: JSON.stringify(payload),
     })
     await handleUnauthorized(response)
@@ -244,9 +239,7 @@ export const api = {
   ): Promise<void> {
     const response = await fetch(`${API_BASE_URL}/email/send-anonymous-email`, {
       method: 'POST',
-      headers: withAuth({
-        'Content-Type': 'application/json',
-      }),
+      headers: getHeaders(),
       body: JSON.stringify({ email, title, description, url }),
     })
     await handleUnauthorized(response)
