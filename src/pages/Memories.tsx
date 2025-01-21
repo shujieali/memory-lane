@@ -121,12 +121,12 @@ export default function Memories() {
   }
 
   return (
-    <Container
+    <Box
       data-scroll-container
-      maxWidth='xl'
       sx={{
         overflowY: 'auto',
         height: `calc(100vh - 75px)`,
+        width: '100%',
       }}
     >
       <Box sx={{ p: 3 }}>
@@ -162,6 +162,6 @@ export default function Memories() {
           </Typography>
         )}
       </Box>
-    </Container>
+    </Box>
   )
 }
