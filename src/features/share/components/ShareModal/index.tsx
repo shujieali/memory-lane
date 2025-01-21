@@ -164,7 +164,7 @@ export default function ShareModal({
     try {
       await api.sendEmail(email, title, description, url)
       enqueueSnackbar('Email sent successfully', { variant: 'success' })
-    } catch (error) {
+    } catch {
       enqueueSnackbar(
         'An error occurred while sharing the memory. Please try again later.',
         { variant: 'error' },
