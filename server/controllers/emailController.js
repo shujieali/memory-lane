@@ -2,7 +2,7 @@ const sgMail = require('@sendgrid/mail')
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
-const sendAnonymousEmail = async (req, res) => {
+const sendEmail = async (req, res) => {
   const { email, title, description, url } = req.body
 
   if (!email || !title || !description || !url) {
@@ -26,5 +26,5 @@ const sendAnonymousEmail = async (req, res) => {
 }
 
 module.exports = {
-  sendAnonymousEmail,
+  sendEmail,
 }

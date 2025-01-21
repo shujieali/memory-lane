@@ -231,13 +231,13 @@ export const api = {
     return data
   },
 
-  async sendAnonymousEmail(
+  async sendEmail(
     email: string,
     title: string,
     description: string,
     url: string,
   ): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/email/send-anonymous-email`, {
+    const response = await fetch(`${API_BASE_URL}/email/send-email`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ email, title, description, url }),

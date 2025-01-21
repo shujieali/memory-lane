@@ -1,6 +1,6 @@
 const express = require('express')
 const { body } = require('express-validator')
-const { sendAnonymousEmail } = require('../controllers/emailController')
+const { sendEmail } = require('../controllers/emailController')
 const { validateRequest } = require('../utils/validation')
 
 const router = express.Router()
@@ -14,9 +14,9 @@ const router = express.Router()
 
 /**
  * @swagger
- * /email/send-anonymous-email:
+ * /email/send-email:
  *   post:
- *     summary: Send an anonymous email
+ *     summary: Send an email
  *     tags: [Email]
  *     requestBody:
  *       required: true
@@ -61,7 +61,7 @@ const router = express.Router()
  *         description: Email sending failed
  */
 router.post(
-  '/send-anonymous-email',
+  '/send-email',
   [
     body('email').isEmail(),
     body('title').notEmpty(),
@@ -69,7 +69,7 @@ router.post(
     body('url').notEmpty(),
   ],
   validateRequest,
-  sendAnonymousEmail,
+  sendEmail,
 )
 
 module.exports = router

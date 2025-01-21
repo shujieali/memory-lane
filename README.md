@@ -24,7 +24,6 @@ A web application that allows users to create, manage, and organize their memori
   - Responsive grid layout
   - Surprise memories on home page
   - Chronological timeline view
-  - Offline access to memories
   - Search and filter capabilities
   - Infinite scroll pagination
 
@@ -47,7 +46,6 @@ A web application that allows users to create, manage, and organize their memori
   - Show/hide dates and tags
   - Toast notifications
   - Progressive Web App (PWA) support
-  - Offline functionality
   - Add to home screen capability
 
 - **Sharing & Social**:

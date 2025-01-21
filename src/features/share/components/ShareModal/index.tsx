@@ -18,6 +18,7 @@ import {
   Share as ShareIcon,
 } from '@mui/icons-material'
 import { enqueueSnackbar } from 'notistack'
+import { api } from '../../../../services/api'
 
 interface ShareModalProps {
   title: string
@@ -143,11 +144,35 @@ export default function ShareModal({
     }
   }
 
-  const handleSendEmail = () => {
-    // TODO: Implement email sending logic here
-    enqueueSnackbar('Email sent successfully', { variant: 'success' })
-    setEmail('')
-    onClose()
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
+  const handleSendEmail = async () => {
+    if (!email) {
+      enqueueSnackbar('Email is required', { variant: 'error' })
+      return
+    }
+
+    if (!validateEmail(email)) {
+      enqueueSnackbar('Please enter a valid email address', {
+        variant: 'error',
+      })
+      return
+    }
+    try {
+      await api.sendEmail(email, title, description, url)
+    } catch (error) {
+      enqueueSnackbar(
+        'An error occurred while sharing the memory. Please try again later.',
+        { variant: 'error' },
+      )
+    } finally {
+      enqueueSnackbar('Email sent successfully', { variant: 'success' })
+      setEmail('')
+      onClose()
+    }
   }
 
   const handleCopyLink = async () => {
