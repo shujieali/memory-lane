@@ -1,9 +1,11 @@
 const CACHE_NAME = 'memory-lane-v1'
+const STATIC_CACHE = 'static-v1'
+const DATA_CACHE = 'data-v1'
+
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
-  '/offline',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
 ]
@@ -12,10 +14,11 @@ const urlsToCache = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     Promise.all([
-      caches.open(CACHE_NAME).then(async (cache) => {
+      caches.open(STATIC_CACHE).then(async (cache) => {
         // Cache the app shell and static assets
         await cache.addAll(urlsToCache)
       }),
+      caches.open(DATA_CACHE), // Create data cache
       self.skipWaiting(), // Activate new service worker immediately
     ]),
   )
@@ -23,61 +26,56 @@ self.addEventListener('install', (event) => {
 
 // Serve cached content when offline
 self.addEventListener('fetch', (event) => {
-  // Handle API requests and non-GET methods - pass through directly to network
-  if (
-    event.request.method !== 'GET' ||
-    event.request.url.includes('api') ||
-    event.request.url.includes('services')
-  ) {
+  const { request } = event
+
+  // Handle API requests
+  if (request.url.includes('/api/')) {
     event.respondWith(
-      fetch(event.request.clone(), {
-        mode: 'cors',
-        credentials: 'same-origin',
-      }),
+      caches.open(DATA_CACHE).then((cache) =>
+        fetch(request)
+          .then((response) => {
+            if (response.ok) {
+              cache.put(request, response.clone())
+            }
+            return response
+          })
+          .catch(() => cache.match(request)),
+      ),
     )
     return
   }
 
-  // Only cache static assets with supported URL schemes
+  // Handle static assets
   if (
-    event.request.method === 'GET' &&
-    (event.request.url.startsWith('http://') ||
-      event.request.url.startsWith('https://')) &&
-    (event.request.url.match(/\.(js|css|html|png|jpg|jpeg|gif|svg|ico)$/) ||
-      event.request.url.includes('offline'))
+    request.method === 'GET' &&
+    (request.url.startsWith('http://') || request.url.startsWith('https://'))
   ) {
     event.respondWith(
-      caches.match(event.request).then((response) => {
-        if (response) {
-          return response
-        }
-        return fetch(event.request)
-          .then((response) => {
-            // Check if we received a valid response
-            if (
-              !response ||
-              response.status !== 200 ||
-              response.type !== 'basic'
-            ) {
-              return response
+      caches.open(STATIC_CACHE).then((cache) =>
+        cache.match(request).then((response) => {
+          const fetchPromise = fetch(request).then((networkResponse) => {
+            if (networkResponse.ok) {
+              cache.put(request, networkResponse.clone())
             }
+            return networkResponse
+          })
 
-            const responseToCache = response.clone()
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache)
+          // Return cached response immediately, then update cache in background
+          return (
+            response ||
+            fetchPromise.catch(() => {
+              // If both cache and network fail, try to serve index.html for navigation requests
+              if (request.headers.get('accept')?.includes('text/html')) {
+                return cache.match('/index.html')
+              }
+              return new Response('', {
+                status: 408,
+                statusText: 'Request timed out',
+              })
             })
-
-            return response
-          })
-          .catch(() => {
-            // If the fetch fails (e.g., due to being offline), serve the app shell
-            // The app's router will handle showing the offline page
-            if (event.request.headers.get('accept').includes('text/html')) {
-              return caches.match('/index.html')
-            }
-            return null
-          })
-      }),
+          )
+        }),
+      ),
     )
   }
 })
@@ -97,7 +95,8 @@ self.addEventListener('activate', (event) => {
       caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
+            // Remove old versions of caches
+            if (![STATIC_CACHE, DATA_CACHE].includes(cacheName)) {
               return caches.delete(cacheName)
             }
           }),

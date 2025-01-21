@@ -46,6 +46,7 @@ A web application that allows users to create, manage, and organize their memori
   - Show/hide dates and tags
   - Toast notifications
   - Progressive Web App (PWA) support
+  - Offline functionality
   - Add to home screen capability
 
 - **Sharing & Social**:

@@ -25,3 +25,15 @@ export function saveSettings(settings: AppSettings) {
     console.error(`Failed to save settings: ${error}`)
   }
 }
+
+export function clearSettings(): void {
+  try {
+    localStorage.removeItem(SETTINGS_STORAGE_KEY)
+    // Reload the page to apply the changes
+    window.location.reload()
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(`Failed to clear settings: ${err.message}`)
+    }
+  }
+}

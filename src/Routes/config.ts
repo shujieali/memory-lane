@@ -14,7 +14,6 @@ const Memories = lazy(() => import('../pages/Memories'))
 const MemoryDetail = lazy(() => import('../pages/MemoryDetail'))
 const PublicMemory = lazy(() => import('../pages/PublicMemory'))
 const PublicMemoryLanePage = lazy(() => import('../pages/PublicMemoryLane'))
-const Offline = lazy(() => import('../pages/Offline'))
 
 const guestRoutes: RouteConfig[] = [
   {
@@ -41,12 +40,6 @@ const guestRoutes: RouteConfig[] = [
 ]
 
 const publicRoutes: RouteConfig[] = [
-  {
-    path: ROUTE_PATHS.offline,
-    component: Offline,
-    access: 'public',
-    title: 'Offline',
-  },
   {
     path: ROUTE_PATHS.publicMemory,
     component: PublicMemory,

@@ -2,6 +2,7 @@ import { useReducer, ReactNode, useEffect } from 'react'
 import { auth } from '../services/auth'
 import { authReducer, initialState } from './authReducer'
 import { AuthContext } from './contexts'
+import { clearSettings } from './settingsUtils'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(authReducer, initialState)
@@ -35,8 +36,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     await new Promise((resolve) => setTimeout(resolve, 500))
+    // Clear auth data
     localStorage.removeItem('user')
     localStorage.removeItem('token')
+    // Clear user settings
+    clearSettings()
     dispatch({ type: 'LOGOUT' })
   }
 

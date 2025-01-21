@@ -11,9 +11,9 @@ import {
   Button,
 } from '@mui/material'
 import { PersonAdd as PersonAddIcon } from '@mui/icons-material'
-import { Menu as MenuIcon } from '@mui/icons-material'
+import { Menu as MenuIcon, WifiOff } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
-import { useAuth, useSettings } from '../../hooks'
+import { useAuth, useSettings, useOfflineDetection } from '../../hooks'
 import { createAppTheme } from '../../theme/theme'
 import NavigationDrawer from '../../components/NavigationDrawer'
 import { drawerWidth } from '../../components/constants'
@@ -22,6 +22,7 @@ export default function AppHeader() {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const { settings, updateSettings } = useSettings()
+  const isOffline = useOfflineDetection()
   const theme = createAppTheme(settings.theme.mode)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -101,6 +102,11 @@ export default function AppHeader() {
           >
             Memory Lane
           </Typography>
+          {isOffline && (
+            <IconButton>
+              <WifiOff />
+            </IconButton>
+          )}
           {user ? (
             <>
               <IconButton
