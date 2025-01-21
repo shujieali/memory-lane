@@ -14,6 +14,7 @@ export interface ScrollDetectionOptions {
   /**
    * Threshold to consider an element "in view" (0 to 1)
    */
+  threshold?: number
 }
 
 export interface ScrollDetectionResult<T> {

@@ -61,4 +61,4 @@ const MemoryTimelineItem: React.FC<MemoryTimelineItemProps> = ({
   )
 }
 
-export default MemoryTimelineItem
+export default React.memo(MemoryTimelineItem)

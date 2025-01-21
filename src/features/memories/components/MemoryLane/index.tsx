@@ -25,13 +25,6 @@ const MemoryLane: React.FC<MemoryLaneProps> = ({
       scrollDebounce: 100,
     })
 
-  // Set the scroll container ref from the hook
-  React.useEffect(() => {
-    if (containerRef) {
-      containerRef.current = document.querySelector('[data-scroll-container]')
-    }
-  }, [containerRef])
-
   if (loading || error || !memories.length) {
     return (
       <StatusIndicator
@@ -74,4 +67,4 @@ const MemoryLane: React.FC<MemoryLaneProps> = ({
   )
 }
 
-export default MemoryLane
+export default React.memo(MemoryLane)

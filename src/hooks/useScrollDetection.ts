@@ -39,13 +39,14 @@ export function useScrollDetection<T>(
       '[data-scroll-container]',
     )
     if (!scrollContainer) return
-
     // Find items that are currently visible
     const containerRect = scrollContainer.getBoundingClientRect()
     const middleY = containerRect.height / 2
 
     // Find the item closest to the middle of the viewport
-    const children = Array.from(containerRef.current.children)
+    const children = Array.from(
+      Array.from(containerRef.current.children)[0].children,
+    )
     let closestChild: Element | null = null
     let minDistance = Infinity
 
