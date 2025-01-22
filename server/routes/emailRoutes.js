@@ -2,6 +2,7 @@ const express = require('express')
 const { body } = require('express-validator')
 const { sendEmail } = require('../controllers/emailController')
 const { validateRequest } = require('../utils/validation')
+const { authenticateToken } = require('../utils/auth')
 
 const router = express.Router()
 
@@ -62,6 +63,7 @@ const router = express.Router()
  */
 router.post(
   '/send-email',
+  authenticateToken,
   [
     body('email').isEmail(),
     body('title').notEmpty(),
