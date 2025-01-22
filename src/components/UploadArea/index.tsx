@@ -1,7 +1,13 @@
 import React, { useMemo } from 'react'
 import { Box } from '@mui/material'
 import { useDropzone } from 'react-dropzone'
-import { baseStyle, activeStyle, acceptStyle, rejectStyle } from './constants'
+import {
+  baseStyle,
+  activeStyle,
+  acceptStyle,
+  rejectStyle,
+  errorStyle,
+} from './constants'
 import { UploadPopOver } from './UploadPopOver'
 import { FileSelect } from './FileSelect'
 import { FileUploadAreaProps } from './types'
@@ -9,6 +15,7 @@ import { FileUploadAreaProps } from './types'
 const FileUploadArea: React.FC<FileUploadAreaProps> = ({
   hasFiles = false,
   onDrop = (): void => {},
+  hasError = false,
   children,
 }) => {
   const {
@@ -31,8 +38,9 @@ const FileUploadArea: React.FC<FileUploadAreaProps> = ({
       ...(isDragActive ? activeStyle : {}),
       ...(isDragAccept ? acceptStyle : {}),
       ...(isDragReject ? rejectStyle : {}),
+      ...(hasError ? errorStyle : {}),
     }),
-    [isDragActive, isDragReject, isDragAccept],
+    [isDragActive, isDragReject, isDragAccept, hasError],
   )
 
   return (

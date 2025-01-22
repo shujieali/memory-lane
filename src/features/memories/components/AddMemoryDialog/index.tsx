@@ -121,17 +121,20 @@ export default function MemoryDialog({
       errors.image_urls = 'Images are still uploading'
       isValid = false
     }
+    if (files?.length === 0) {
+      errors.image_urls = 'At least one image is required'
+      isValid = false
+    }
 
     setFormErrors(errors)
     return isValid
   }
 
   const handleSaveMemory = async () => {
-    setSaveProgress({ saving: true, progress: 0 })
     if (!validateForm()) {
       return
     }
-
+    setSaveProgress({ saving: true, progress: 0 })
     const timestamp = memoryForm.timestamp || new Date().toISOString()
     const progressInterval = window.setInterval(() => {
       setSaveProgress((prev) => ({
@@ -203,6 +206,7 @@ export default function MemoryDialog({
           <ImageUploader
             files={files}
             setFiles={setFiles}
+            hasError={!!formErrors.image_urls}
             onUploadStatusChange={setIsUploading}
           />
           <MemoryForm

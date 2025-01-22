@@ -31,16 +31,34 @@ self.addEventListener('fetch', (event) => {
   // Handle API requests
   if (request.url.includes('/api/')) {
     event.respondWith(
-      caches.open(DATA_CACHE).then((cache) =>
-        fetch(request)
-          .then((response) => {
-            if (response.ok) {
-              cache.put(request, response.clone())
-            }
-            return response
-          })
-          .catch(() => cache.match(request)),
-      ),
+      caches.open(DATA_CACHE).then(async (cache) => {
+        // For POST, PUT, DELETE - invalidate cache for GET requests to same endpoint
+        if (['POST', 'PUT', 'DELETE'].includes(request.method)) {
+          const baseUrl = request.url.split('?')[0]
+          const relatedKeys = await cache.keys()
+          const getRequests = relatedKeys.filter(
+            (key) => key.url.startsWith(baseUrl) && key.method === 'GET',
+          )
+          await Promise.all(getRequests.map((key) => cache.delete(key)))
+
+          return fetch(request)
+        }
+
+        // For GET requests, try network first then cache
+        try {
+          const response = await fetch(request)
+          if (response.ok) {
+            cache.put(request, response.clone())
+          }
+          return response
+        } catch (error) {
+          const cachedResponse = await cache.match(request)
+          if (cachedResponse) {
+            return cachedResponse
+          }
+          throw error
+        }
+      }),
     )
     return
   }
@@ -48,7 +66,8 @@ self.addEventListener('fetch', (event) => {
   // Handle static assets
   if (
     request.method === 'GET' &&
-    (request.url.startsWith('http://') || request.url.startsWith('https://'))
+    (request.url.startsWith('http://') || request.url.startsWith('https://')) &&
+    !request.url.includes('/assets/')
   ) {
     event.respondWith(
       caches.open(STATIC_CACHE).then((cache) =>

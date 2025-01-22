@@ -15,5 +15,6 @@ export interface ImageUploaderProps {
       }[]
     >
   >
+  hasError: boolean
   onUploadStatusChange?: (isUploading: boolean) => void
 }

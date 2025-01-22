@@ -1,6 +1,7 @@
 export interface FileUploadAreaProps {
   hasFiles: boolean
   onDrop?: (acceptedFiles: File[]) => void
+  hasError: boolean
   children?: React.ReactNode
 }
 

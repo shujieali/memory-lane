@@ -15,6 +15,7 @@ import { ImageUploaderProps } from './types'
 const ImageUploader = ({
   files,
   setFiles,
+  hasError,
   onUploadStatusChange,
 }: ImageUploaderProps) => {
   const [isUploading, setIsUploading] = useState(false)
@@ -200,7 +201,11 @@ const ImageUploader = ({
           overflow: 'auto',
         }}
       >
-        <FileUploadArea onDrop={onDrop} hasFiles={files?.length > 0}>
+        <FileUploadArea
+          hasError={hasError}
+          onDrop={onDrop}
+          hasFiles={files?.length > 0}
+        >
           <Box
             sx={{
               display: 'flex',

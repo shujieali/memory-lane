@@ -23,3 +23,9 @@ export const rejectStyle = {
   borderStyle: 'dashed',
   zIndex: 1192,
 }
+
+export const errorStyle = {
+  borderColor: 'red',
+  borderStyle: 'dashed',
+  zIndex: 1192,
+}
