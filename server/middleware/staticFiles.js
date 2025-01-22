@@ -1,18 +1,49 @@
 const express = require('express')
 const path = require('path')
-const { isPathInside } = require('path-is-inside')
+const fs = require('fs')
 
 function setupStaticFiles(app) {
   const uploadDir =
     process.env.LOCAL_STORAGE_PATH || path.join(process.cwd(), 'uploads')
 
+  // Create uploads directory if it doesn't exist
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true })
+    console.log(`Created upload directory: ${uploadDir}`)
+  }
+
   // Security middleware to prevent path traversal
   const secureStatic = (req, res, next) => {
-    const filePath = path.join(uploadDir, req.path)
-    if (!isPathInside(filePath, uploadDir)) {
-      return res.status(403).send('Forbidden')
+    try {
+      const filePath = path.join(uploadDir, req.path)
+      const relativePath = path.relative(uploadDir, filePath)
+
+      // Check if path attempts to traverse outside upload directory
+      if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+        return res.status(403).json({
+          error: 'Access forbidden: Invalid file path',
+        })
+      }
+
+      // Check if file exists and is accessible
+      if (fs.existsSync(filePath)) {
+        try {
+          fs.accessSync(filePath, fs.constants.R_OK)
+        } catch (err) {
+          console.error(`File permission error: ${err.message}`)
+          return res.status(500).json({
+            error: 'Server error: Unable to access file',
+          })
+        }
+      }
+
+      next()
+    } catch (err) {
+      console.error(`Static files error: ${err.message}`)
+      return res.status(500).json({
+        error: 'Server error processing file request',
+      })
     }
-    next()
   }
 
   // Serve files from upload directory under /uploads route
@@ -28,7 +59,9 @@ function setupStaticFiles(app) {
 
   // Handle 404 for files
   app.use('/uploads', (req, res) => {
-    res.status(404).send('File not found')
+    res.status(404).json({
+      error: 'File not found',
+    })
   })
 }
 

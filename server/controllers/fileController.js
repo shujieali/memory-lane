@@ -18,15 +18,35 @@ const getUploadUrl = async (req, res) => {
 
 const deleteFiles = async (req, res) => {
   try {
-    const { fileUrls } = req.body
-    if (!Array.isArray(fileUrls)) {
-      return res.status(400).json({ error: 'fileUrls must be an array' })
+    let keys
+    // Handle both keys and fileUrls for backward compatibility
+    if (req.body.keys) {
+      keys = req.body.keys
+    } else if (req.body.fileUrls) {
+      // Extract keys from fileUrls
+      const baseUrl =
+        process.env.BASE_URL || `http://localhost:${process.env.PORT || 4001}`
+      keys = req.body.fileUrls.map((url) =>
+        url.replace(`${baseUrl}/uploads/`, ''),
+      )
+    } else {
+      return res
+        .status(400)
+        .json({ error: 'Request must include either keys or fileUrls array' })
+    }
+
+    if (!Array.isArray(keys)) {
+      return res.status(400).json({ error: 'keys/fileUrls must be an array' })
     }
 
     const storageProvider = StorageFactory.getInstance()
+    const fileUrls = keys.map(
+      (key) =>
+        `${process.env.BASE_URL || `http://localhost:${process.env.PORT || 4001}`}/uploads/${key}`,
+    )
     await storageProvider.deleteFiles(fileUrls)
 
-    res.json({ success: true })
+    res.json({ success: true, deletedKeys: keys })
   } catch (error) {
     console.error('Error deleting files:', error)
     res.status(500).json({ error: 'Failed to delete files' })

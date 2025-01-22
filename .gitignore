@@ -30,3 +30,6 @@ dist-ssr
 # playwright
 playwright-report/
 test-results/
+
+# local uploads
+uploads/

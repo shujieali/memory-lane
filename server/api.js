@@ -2,7 +2,6 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const rateLimit = require('express-rate-limit')
-const multer = require('multer')
 const setupStaticFiles = require('./middleware/staticFiles')
 const swagger = require('./swagger')
 const authRoutes = require('./routes/authRoutes')
@@ -24,38 +23,19 @@ app.use(
 )
 app.use(express.json())
 
-// Swagger API Documentation
-app.use('/api-docs', swagger.serve, swagger.setup)
-
-// Configure multer for local storage if using local provider
-if (process.env.STORAGE_TYPE === 'local') {
-  const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      const uploadPath = `${process.env.LOCAL_STORAGE_PATH || 'uploads'}/${req.body.key}`
-      cb(null, uploadPath)
-    },
-    filename: (req, file, cb) => {
-      cb(null, req.body.key.split('/').pop())
-    },
-  })
-
-  const upload = multer({ storage })
-  app.post('/api/upload', upload.single('file'), (req, res) => {
-    res.json({
-      success: true,
-      fileUrl: `${process.env.BASE_URL || 'http://localhost:4001'}/uploads/${req.body.key}`,
-    })
-  })
-
-  // Set up static file serving for local storage
-  setupStaticFiles(app)
-}
-
 // Rate limiting
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // limit each IP to 5 requests per windowMs
 })
+
+// Swagger API Documentation
+app.use('/api-docs', swagger.serve, swagger.setup)
+
+// Set up static file serving for local storage if using local provider
+if (process.env.STORAGE_TYPE === 'local') {
+  setupStaticFiles(app)
+}
 
 // Routes
 app.use('/auth', authLimiter, authRoutes)
