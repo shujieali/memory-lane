@@ -37,7 +37,7 @@ export default function MemoryDetail() {
   }
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
+    <Box sx={{ mx: 'auto', p: 2 }}>
       <IconButton onClick={() => navigate(-1)} sx={{ mb: 2 }}>
         <ArrowBackIcon />
       </IconButton>

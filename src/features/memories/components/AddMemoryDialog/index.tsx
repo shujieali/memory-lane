@@ -18,6 +18,7 @@ import { api } from '../../../../services/api'
 import { useAuth } from '../../../../hooks/useAuth'
 import MemoryForm from '../AddMemoryForm'
 import ImageUploader from '../../../../components/ImageUploader'
+import { FileData } from '../../../../components/ImageUploader/types'
 
 interface MemoryDialogProps {
   open: boolean
@@ -48,14 +49,13 @@ export default function MemoryDialog({
   const { user } = useAuth()
   const [memoryForm, setMemoryForm] = useState<MemoryFormState>(emptyMemory)
   const [formErrors, setFormErrors] = useState<MemoryFormErrors>({})
-  const [files, setFiles] = useState<
-    { name: string; progress: number; url: string }[]
-  >([])
+  const [files, setFiles] = useState<FileData[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [saveProgress, setSaveProgress] = useState<SaveProgress>({
     saving: false,
     progress: 0,
   })
+  const [error, setError] = useState<string | null>(null)
 
   // Track original files for cleanup on update/cancel
   const [originalFiles, setOriginalFiles] = useState<string[]>([])
@@ -84,7 +84,39 @@ export default function MemoryDialog({
     }
     setSaveProgress({ saving: false, progress: 0 })
     setFormErrors({})
+    setError(null)
   }, [memory, open])
+
+  // Handle field changes and clear specific errors
+  const handleFieldChange = (
+    field: keyof MemoryFormState,
+    value: string | string[],
+  ) => {
+    setMemoryForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }))
+
+    // Only clear errors for fields that can have errors
+    if (field === 'title' || field === 'description') {
+      if (formErrors[field]) {
+        setFormErrors((prev) => ({
+          ...prev,
+          [field]: undefined,
+        }))
+      }
+    }
+  }
+
+  // Clear image error when files are added/removed
+  useEffect(() => {
+    if (formErrors.image_urls && files.length > 0) {
+      setFormErrors((prev) => ({
+        ...prev,
+        image_urls: undefined,
+      }))
+    }
+  }, [files, formErrors.image_urls])
 
   // Cleanup files on dialog close without saving
   const handleClose = async () => {
@@ -117,11 +149,11 @@ export default function MemoryDialog({
       isValid = false
     }
 
-    if (files?.every((file) => file.progress < 100)) {
+    if (files.some((file) => file.progress < 100)) {
       errors.image_urls = 'Images are still uploading'
       isValid = false
     }
-    if (files?.length === 0) {
+    if (files.length === 0) {
       errors.image_urls = 'At least one image is required'
       isValid = false
     }
@@ -130,12 +162,27 @@ export default function MemoryDialog({
     return isValid
   }
 
-  const handleSaveMemory = async () => {
+  const handleSaveMemory = async (e: React.FormEvent) => {
+    e.preventDefault()
+
     if (!validateForm()) {
       return
     }
+
+    const title = memoryForm.title?.trim()
+    const description = memoryForm.description?.trim()
+
+    if (!title || !description) {
+      setFormErrors({
+        ...formErrors,
+        title: !title ? 'Title is required' : undefined,
+        description: !description ? 'Description is required' : undefined,
+      })
+      return
+    }
+
     setSaveProgress({ saving: true, progress: 0 })
-    const timestamp = memoryForm.timestamp || new Date().toISOString()
+    setError(null)
     const progressInterval = window.setInterval(() => {
       setSaveProgress((prev) => ({
         ...prev,
@@ -146,14 +193,14 @@ export default function MemoryDialog({
     try {
       const currentUrls = files.map((file) => file.url)
       const memoryData = {
-        title: memoryForm.title || '',
-        description: memoryForm.description || '',
+        title,
+        description,
         tags: memoryForm.tags || [],
         image_urls: currentUrls,
-        timestamp,
+        timestamp: memoryForm.timestamp || new Date().toISOString(),
       }
 
-      if (memory) {
+      if (memory?.id) {
         // Update existing memory
         await api.updateMemory(memory.id, memoryData)
 
@@ -179,9 +226,7 @@ export default function MemoryDialog({
       }, 500)
     } catch (error) {
       console.error('Error saving memory:', error)
-      setFormErrors({
-        title: 'Failed to save memory. Please try again.',
-      })
+      setError('Failed to save memory. Please try again.')
       setSaveProgress({ saving: false, progress: 0 })
     } finally {
       window.clearInterval(progressInterval)
@@ -211,9 +256,8 @@ export default function MemoryDialog({
           />
           <MemoryForm
             memoryForm={memoryForm}
-            setMemoryForm={setMemoryForm}
+            onFieldChange={handleFieldChange}
             formErrors={formErrors}
-            setFormErrors={setFormErrors}
           />
         </Container>
       </DialogContent>

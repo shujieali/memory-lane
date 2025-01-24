@@ -16,13 +16,18 @@ class GCPStorageProvider extends StorageProvider {
   async getUploadUrl(userId, options = {}) {
     const filename = `${Date.now()}_${crypto.randomBytes(16).toString('hex')}`
     const key = `${userId}/${filename}`
+    // Define max content length (in bytes)
+    const maxContentLength = 10 * 1024 * 1024 // 10 MB
 
-    // Generate a signed URL that lets users upload files directly to GCS
-    const [url] = await this.bucket.file(key).getSignedUrl({
-      version: 'v4',
-      action: 'write',
+    const conditions = [['content-length-range', 0, maxContentLength]]
+
+    if (options.contentType) {
+      conditions.push(['eq', '$Content-Type', options.contentType])
+    }
+
+    const [response] = await this.bucket.file(key).generateSignedPostPolicyV4({
       expires: Date.now() + 15 * 60 * 1000, // 15 minutes
-      contentType: options.contentType || 'application/octet-stream',
+      conditions,
     })
 
     // Construct the public URL
@@ -31,9 +36,12 @@ class GCPStorageProvider extends StorageProvider {
       : `https://storage.googleapis.com/${this.bucket.name}/${key}`
 
     return {
-      url,
+      url: response.url,
       fileUrl,
-      // No additional fields needed for GCP signed URLs
+      fields: {
+        ...response.fields,
+        'Content-Type': options.contentType || 'application/octet-stream',
+      },
     }
   }
 

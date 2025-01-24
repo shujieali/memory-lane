@@ -29,14 +29,19 @@ export const api = {
     return data.memories
   },
 
-  async getUploadUrl(): Promise<{
+  async getUploadUrl(options?: { contentType?: string }): Promise<{
     url: string
     fields: Record<string, string>
     fileUrl: string
   }> {
-    const response = await fetch(`${API_BASE_URL}/api/storage/url`, {
-      headers: withAuth(),
-    })
+    const response = await fetch(
+      `${API_BASE_URL}/api/storage/url${
+        options?.contentType ? `?contentType=${options.contentType}` : ''
+      }`,
+      {
+        headers: withAuth(),
+      },
+    )
     await handleUnauthorized(response)
     if (!response.ok) {
       throw new Error('Failed to get upload URL')
@@ -73,8 +78,11 @@ export const api = {
         // Start with 0 progress
         onProgress({ name: file.name, progress: 0 })
 
-        // Set up upload
-        const { url, fields, fileUrl } = await this.getUploadUrl()
+        // Set up upload with correct content type
+        const { url, fields, fileUrl } = await this.getUploadUrl({
+          contentType: file.type || 'application/octet-stream',
+        })
+
         const formData = new FormData()
 
         // Add all fields from the pre-signed URL first

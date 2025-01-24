@@ -7,7 +7,7 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material'
-import { Delete } from '@mui/icons-material'
+import { Delete, AddPhotoAlternate } from '@mui/icons-material'
 import { api } from '../../services/api'
 import FileUploadArea from '../UploadArea'
 import { ImageUploaderProps } from './types'
@@ -216,6 +216,45 @@ const ImageUploader = ({
               justifyContent: 'flex-start',
             }}
           >
+            {files?.length > 0 && (
+              <Box
+                key='add-more'
+                sx={{
+                  position: 'relative',
+                  flex: '1 1 200px',
+                  minWidth: '180px',
+                  maxWidth: '250px',
+                  height: '200px',
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  border: '2px dashed',
+                  borderColor: 'grey.300',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: 'grey.50',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease-in-out',
+                  '&:hover': {
+                    borderColor: 'primary.main',
+                    bgcolor: 'grey.100',
+                    '& .addIcon': {
+                      color: 'primary.main',
+                      transform: 'scale(1.1)',
+                    },
+                  },
+                }}
+              >
+                <AddPhotoAlternate
+                  className='addIcon'
+                  sx={{
+                    fontSize: 40,
+                    color: 'grey.400',
+                    transition: 'all 0.2s ease-in-out',
+                  }}
+                />
+              </Box>
+            )}
             {files?.map((uploadedFile, index) => (
               <Box
                 key={index}

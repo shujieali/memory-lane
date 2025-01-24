@@ -1,13 +1,12 @@
 import {
   Box,
   Typography,
-  ImageList,
-  ImageListItem,
   Paper,
   Chip,
   Stack,
   Modal,
   IconButton,
+  Grid2 as Grid,
 } from '@mui/material'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
@@ -29,18 +28,8 @@ const modalStyle = {
   borderRadius: 2,
 }
 
-const calculateImageListHeight = (imageCount: number) => {
-  if (imageCount <= 3) return 180 // Slightly shorter for 1-3 images
-  // Calculate number of rows needed (3 images per row)
-  const rows = Math.ceil(imageCount / 3)
-  // Each row is 160px high (shorter than before), with 8px gap between rows
-  // Add 16px padding at the bottom for better spacing
-  return rows * 160 + (rows - 1) * 8 + 16
-}
-
 export default function MemoryCardPreview({ memory }: { memory: Memory }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
-  const imageListHeight = calculateImageListHeight(memory.image_urls.length)
 
   const handleImageClick = (url: string) => {
     setSelectedImage(url)
@@ -57,7 +46,7 @@ export default function MemoryCardPreview({ memory }: { memory: Memory }) {
         sx={{
           p: 3,
           mx: 2,
-          mb: 2, // Add bottom margin to cards
+          mb: 2,
           bgcolor: 'background.paper',
           borderRadius: 2,
         }}
@@ -114,24 +103,20 @@ export default function MemoryCardPreview({ memory }: { memory: Memory }) {
           )}
         </Box>
 
-        {/* Photos Grid with Bottom Padding */}
-        <Box sx={{ pb: memory.image_urls.length > 6 ? 2 : 0 }}>
-          <ImageList
-            sx={{
-              width: '100%',
-              height: imageListHeight,
-              m: 0,
-              // Add overflow handling
-              overflowY: 'hidden',
-            }}
-            cols={memory.image_urls.length <= 3 ? memory.image_urls.length : 3}
-            gap={8}
-          >
-            {memory.image_urls.map((url, index) => (
-              <ImageListItem
-                key={index}
+        {/* Photos Grid */}
+        <Grid container spacing={2} sx={{ width: '100%' }}>
+          {memory.image_urls.map((url, index) => (
+            <Grid key={index}>
+              <Box
                 sx={{
                   cursor: 'pointer',
+                  width: '200px',
+                  height: '200px',
+                  paddingTop: '100%', // Creates a square aspect ratio
+                  position: 'relative',
+                  bgcolor: 'grey.100',
+                  borderRadius: 1,
+                  overflow: 'hidden',
                   '&:hover': {
                     opacity: 0.8,
                     transition: 'opacity 0.2s',
@@ -139,21 +124,24 @@ export default function MemoryCardPreview({ memory }: { memory: Memory }) {
                 }}
                 onClick={() => handleImageClick(url)}
               >
-                <img
+                <Box
+                  component='img'
                   src={url}
                   alt={`Memory ${index + 1}`}
                   loading='lazy'
-                  style={{
+                  sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
                     width: '100%',
                     height: '100%',
-                    objectFit: 'cover',
-                    borderRadius: 4,
+                    objectFit: 'contain',
                   }}
                 />
-              </ImageListItem>
-            ))}
-          </ImageList>
-        </Box>
+              </Box>
+            </Grid>
+          ))}
+        </Grid>
       </Paper>
 
       {/* Full Image Modal */}

@@ -20,19 +20,12 @@ const deleteFiles = async (req, res) => {
   try {
     let keys
     // Handle both keys and fileUrls for backward compatibility
-    if (req.body.keys) {
-      keys = req.body.keys
-    } else if (req.body.fileUrls) {
-      // Extract keys from fileUrls
-      const baseUrl =
-        process.env.BASE_URL || `http://localhost:${process.env.PORT || 4001}`
-      keys = req.body.fileUrls.map((url) =>
-        url.replace(`${baseUrl}/uploads/`, ''),
-      )
+    if (req.body.fileUrls) {
+      keys = req.body.fileUrls
     } else {
       return res
         .status(400)
-        .json({ error: 'Request must include either keys or fileUrls array' })
+        .json({ error: 'Request must include fileUrls array' })
     }
 
     if (!Array.isArray(keys)) {
@@ -40,10 +33,7 @@ const deleteFiles = async (req, res) => {
     }
 
     const storageProvider = StorageFactory.getInstance()
-    const fileUrls = keys.map(
-      (key) =>
-        `${process.env.BASE_URL || `http://localhost:${process.env.PORT || 4001}`}/uploads/${key}`,
-    )
+    const fileUrls = keys
     await storageProvider.deleteFiles(fileUrls)
 
     res.json({ success: true, deletedKeys: keys })

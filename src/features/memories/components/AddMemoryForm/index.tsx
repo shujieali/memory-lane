@@ -1,4 +1,4 @@
-import { useState, KeyboardEvent } from 'react'
+import { useState, KeyboardEvent, ChangeEvent } from 'react'
 import { TextField, Box, Chip, Stack } from '@mui/material'
 import LocalOffer from '@mui/icons-material/LocalOffer'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
@@ -9,35 +9,35 @@ import { MemoryFormErrors, MemoryFormState } from '../../../../types/memory'
 
 interface MemoryFormFieldsProps {
   memoryForm: MemoryFormState
-  setMemoryForm: (memory: MemoryFormState) => void
   formErrors: MemoryFormErrors
-  setFormErrors: (errors: MemoryFormErrors) => void
+  onFieldChange: (
+    field: keyof MemoryFormState,
+    value: string | string[],
+  ) => void
 }
 
 const MemoryFormFields = ({
   memoryForm,
-  setMemoryForm,
   formErrors,
+  onFieldChange,
 }: MemoryFormFieldsProps) => {
   const [tagInput, setTagInput] = useState('')
+
   const handleTagInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && tagInput.trim()) {
       e.preventDefault()
       if (!memoryForm.tags?.includes(tagInput.trim())) {
-        setMemoryForm({
-          ...memoryForm,
-          tags: [...(memoryForm.tags || []), tagInput.trim()],
-        })
+        onFieldChange('tags', [...(memoryForm.tags || []), tagInput.trim()])
       }
       setTagInput('')
     }
   }
 
   const handleDeleteTag = (tagToDelete: string) => {
-    setMemoryForm({
-      ...memoryForm,
-      tags: memoryForm.tags?.filter((tag) => tag !== tagToDelete),
-    })
+    onFieldChange(
+      'tags',
+      (memoryForm.tags || []).filter((tag) => tag !== tagToDelete),
+    )
   }
 
   return (
@@ -48,8 +48,8 @@ const MemoryFormFields = ({
         label='Title'
         fullWidth
         value={memoryForm.title || ''}
-        onChange={(e) =>
-          setMemoryForm({ ...memoryForm, title: e.target.value })
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          onFieldChange('title', e.target.value)
         }
         error={!!formErrors.title}
         helperText={formErrors.title}
@@ -62,8 +62,8 @@ const MemoryFormFields = ({
         multiline
         rows={4}
         value={memoryForm.description || ''}
-        onChange={(e) =>
-          setMemoryForm({ ...memoryForm, description: e.target.value })
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          onFieldChange('description', e.target.value)
         }
         error={!!formErrors.description}
         helperText={formErrors.description}
@@ -75,10 +75,7 @@ const MemoryFormFields = ({
           value={memoryForm.timestamp ? dayjs(memoryForm.timestamp) : dayjs()}
           onChange={(date) => {
             if (date) {
-              setMemoryForm({
-                ...memoryForm,
-                timestamp: date.toISOString(),
-              })
+              onFieldChange('timestamp', date.toISOString())
             }
           }}
           sx={{ mt: 2, width: '100%' }}
