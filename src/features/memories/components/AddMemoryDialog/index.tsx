@@ -55,8 +55,6 @@ export default function MemoryDialog({
     saving: false,
     progress: 0,
   })
-  const [error, setError] = useState<string | null>(null)
-
   // Track original files for cleanup on update/cancel
   const [originalFiles, setOriginalFiles] = useState<string[]>([])
 
@@ -84,7 +82,6 @@ export default function MemoryDialog({
     }
     setSaveProgress({ saving: false, progress: 0 })
     setFormErrors({})
-    setError(null)
   }, [memory, open])
 
   // Handle field changes and clear specific errors
@@ -182,7 +179,6 @@ export default function MemoryDialog({
     }
 
     setSaveProgress({ saving: true, progress: 0 })
-    setError(null)
     const progressInterval = window.setInterval(() => {
       setSaveProgress((prev) => ({
         ...prev,
@@ -226,7 +222,6 @@ export default function MemoryDialog({
       }, 500)
     } catch (error) {
       console.error('Error saving memory:', error)
-      setError('Failed to save memory. Please try again.')
       setSaveProgress({ saving: false, progress: 0 })
     } finally {
       window.clearInterval(progressInterval)
