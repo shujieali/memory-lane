@@ -9,6 +9,7 @@ import Search from '../components/Search'
 import Sort from '../components/Sort'
 import { Typography, Stack } from '@mui/material'
 import { ShareButton } from '../features/share'
+import { getApiBaseUrl } from '../services/config'
 
 /**
  * Page component for displaying a user's public memory lane
@@ -57,7 +58,7 @@ const PublicMemoryLanePage: React.FC = () => {
   if (!userId) {
     return <StatusIndicator error={error} loading={loading} />
   }
-
+  const publicUrl = `${getApiBaseUrl()}/social/lane/${userId}`
   return (
     <>
       <Typography variant='h5' align='left' gutterBottom sx={{ px: 2 }}>
@@ -87,7 +88,7 @@ const PublicMemoryLanePage: React.FC = () => {
         <ShareButton
           title={`${user?.name}'s Memory Lane`}
           description={`Explore ${user?.name}'s memories on Memory Lane`}
-          url={window.location.href}
+          url={publicUrl}
         />
       </Stack>
 
