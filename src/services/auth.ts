@@ -38,7 +38,7 @@ export const auth = {
 
     if (!response.ok) {
       const error = await response.json()
-      throw new Error(error.error || 'Failed to register')
+      throw error
     }
 
     const { user, token } = await response.json()

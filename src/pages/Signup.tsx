@@ -24,6 +24,19 @@ interface FormErrors {
   confirmPassword?: string
 }
 
+interface ValidationError {
+  type: string
+  value: string
+  msg: string
+  path: string
+  location: string
+}
+
+interface ApiError {
+  errors?: ValidationError[]
+  message?: string
+}
+
 export default function Signup() {
   const navigate = useNavigate()
   const { register } = useAuth()
@@ -81,10 +94,20 @@ export default function Signup() {
     try {
       await register(form.email, form.password, form.name)
       navigate('/dashboard')
-    } catch {
-      setErrors({
-        email: 'Failed to create account. Email may already be in use.',
-      })
+    } catch (error: unknown) {
+      const err = error as ApiError
+      const newErrors: FormErrors = {}
+      if (err.errors?.length) {
+        err.errors.forEach((validationErr: ValidationError) => {
+          if (validationErr.path && validationErr.msg) {
+            const fieldName = validationErr.path as keyof FormErrors
+            newErrors[fieldName] = validationErr.msg
+          }
+        })
+      } else {
+        newErrors.email = 'Failed to create account. Please try again.'
+      }
+      setErrors(newErrors)
       setLoading(false)
     }
   }

@@ -27,6 +27,18 @@ app.use(express.json())
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 5, // limit each IP to 5 requests per windowMs
+  handler: (req, res) => {
+    res.status(429).json({
+      errors: [
+        {
+          type: 'rate-limit',
+          msg: 'Too many requests, please try again later.',
+          path: 'email',
+          location: 'body',
+        },
+      ],
+    })
+  },
 })
 
 // Swagger API Documentation
@@ -47,7 +59,23 @@ app.use('/social', socialRoutes)
 // Error handling middleware
 app.use((err, req, res, _next) => {
   console.error(err.stack)
-  res.status(500).json({ error: 'Something broke!' })
+
+  // Handle validation errors
+  if (err.errors) {
+    return res.status(400).json({ errors: err.errors })
+  }
+
+  // Handle all other errors with consistent format
+  res.status(err.status || 500).json({
+    errors: [
+      {
+        type: 'error',
+        msg: err.message || 'Something went wrong. Please try again.',
+        path: 'email', // Default to showing under email field
+        location: 'body',
+      },
+    ],
+  })
 })
 
 // Graceful shutdown
