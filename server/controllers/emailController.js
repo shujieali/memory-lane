@@ -1,6 +1,27 @@
-const sgMail = require('@sendgrid/mail')
+const realSgMail = require('@sendgrid/mail')
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+// Create a wrapper that falls back to mock in development
+const sgMail = (() => {
+  const apiKey = process.env.SENDGRID_API_KEY
+
+  // If we have a valid API key (starts with SG.), use real SendGrid
+  if (apiKey && apiKey.startsWith('SG.')) {
+    realSgMail.setApiKey(apiKey)
+    return realSgMail
+  }
+
+  // Otherwise use mock for development
+  console.log('Using mock email service for development')
+  return {
+    setApiKey: () => {},
+    send: async (msg) => {
+      console.log('\n=== Development: Email Details ===')
+      console.log(JSON.stringify(msg, null, 2))
+      console.log('=================================\n')
+      return Promise.resolve()
+    },
+  }
+})()
 
 const sendPasswordResetEmail = async (email, resetUrl) => {
   const msg = {
