@@ -119,7 +119,12 @@ const requestPasswordReset = async (req, res) => {
 
   try {
     // Check if user exists
-    const user = await db.get('SELECT id FROM users WHERE email = ?', [email])
+    const user = await new Promise((resolve, reject) => {
+      db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
+        if (err) reject(err)
+        else resolve(row)
+      })
+    })
 
     if (user) {
       const resetToken = generateResetToken()
