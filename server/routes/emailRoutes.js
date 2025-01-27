@@ -1,6 +1,9 @@
 const express = require('express')
 const { body } = require('express-validator')
-const { sendEmail } = require('../controllers/emailController')
+const {
+  sendEmail,
+  requestPasswordReset,
+} = require('../controllers/emailController')
 const { validateRequest } = require('../utils/validation')
 const { authenticateToken } = require('../utils/auth')
 
@@ -72,6 +75,39 @@ router.post(
   ],
   validateRequest,
   sendEmail,
+)
+
+/**
+ * @swagger
+ * /email/request-reset:
+ *   post:
+ *     summary: Request a password reset
+ *     tags: [Email]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Reset email sent if account exists
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Server error
+ */
+router.post(
+  '/request-reset',
+  [body('email').isEmail()],
+  validateRequest,
+  requestPasswordReset,
 )
 
 module.exports = router

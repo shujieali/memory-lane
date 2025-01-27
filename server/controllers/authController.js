@@ -67,7 +67,46 @@ const login = async (req, res) => {
   }
 }
 
+const resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body
+
+  try {
+    const user = await new Promise((resolve, reject) => {
+      db.get(
+        'SELECT * FROM users WHERE reset_token = ? AND reset_token_expiry > datetime("now")',
+        [token],
+        (err, row) => {
+          if (err) reject(err)
+          else resolve(row)
+        },
+      )
+    })
+
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid or expired reset token' })
+    }
+
+    const passwordHash = hashPassword(newPassword)
+
+    await new Promise((resolve, reject) => {
+      db.run(
+        'UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?',
+        [passwordHash, user.id],
+        (err) => {
+          if (err) reject(err)
+          else resolve()
+        },
+      )
+    })
+
+    res.json({ message: 'Password reset successful' })
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' })
+  }
+}
+
 module.exports = {
   register,
   login,
+  resetPassword,
 }

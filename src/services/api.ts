@@ -255,4 +255,26 @@ export const api = {
       throw new Error('Failed to send email')
     }
   },
+
+  async requestPasswordReset(email: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/email/request-reset`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ email }),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to request password reset')
+    }
+  },
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify({ token, newPassword }),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to reset password')
+    }
+  },
 }

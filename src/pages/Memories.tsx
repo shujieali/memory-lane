@@ -150,6 +150,7 @@ export default function Memories() {
             title={`${user?.name}'s Memory Lane`}
             description='Check out my Memory Lane!'
             url={`${getApiBaseUrl()}/social/lane/${user?.id}`}
+            disabled={loading || !memories.length}
           >
             Share
           </ShareButton>

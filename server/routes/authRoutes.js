@@ -1,6 +1,10 @@
 const express = require('express')
 const { body } = require('express-validator')
-const { register, login } = require('../controllers/authController')
+const {
+  register,
+  login,
+  resetPassword,
+} = require('../controllers/authController')
 const { validateRequest } = require('../utils/validation')
 
 const router = express.Router()
@@ -123,6 +127,52 @@ router.post(
   [body('email').isEmail().normalizeEmail(), body('password').notEmpty()],
   validateRequest,
   login,
+)
+
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *     summary: Reset user password
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - newPassword
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: Reset token received via email
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 8
+ *                 description: New password
+ *     responses:
+ *       200:
+ *         description: Password successfully reset
+ *       400:
+ *         description: Invalid input or expired token
+ *       401:
+ *         description: Invalid token
+ */
+router.post(
+  '/reset-password',
+  [
+    body('token').notEmpty(),
+    body('newPassword')
+      .isLength({ min: 8 })
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)
+      .withMessage(
+        'Password must be at least 8 characters long and include at least one letter, one number, and one special character',
+      ),
+  ],
+  validateRequest,
+  resetPassword,
 )
 
 module.exports = router

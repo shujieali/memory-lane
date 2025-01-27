@@ -6,6 +6,7 @@ interface ShareButtonProps {
   title: string
   description: string
   url: string
+  disabled?: boolean
   children?: React.ReactNode
 }
 
@@ -13,6 +14,7 @@ export default function ShareButton({
   title,
   description,
   url,
+  disabled = false,
   children,
 }: ShareButtonProps) {
   const { shareMemory } = useShareMemory()
@@ -31,6 +33,7 @@ export default function ShareButton({
       onClick={handleShare}
       size='small'
       sx={{ ml: 'auto' }}
+      disabled={disabled}
     >
       {children}
     </Button>

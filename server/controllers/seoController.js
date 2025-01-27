@@ -165,7 +165,8 @@ async function handleSocialShare(req, res) {
     if (!memory) {
       throw new Error('Memory not found')
     }
-    const dimensions = await getImageDimensions(memory.image_urls[0])
+    // Add null check for image_urls array
+    const dimensions = await getImageDimensions(memory.image_urls?.[0])
     const metaTags = await generateMetaTags(memory, baseUrl, dimensions)
     const html = generateHtml(metaTags, redirectUrl)
 

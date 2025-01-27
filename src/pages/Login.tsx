@@ -94,13 +94,32 @@ export default function Login() {
             >
               Sign In
             </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Typography variant='body2'>
-                Don&apos;t have an account?{' '}
-                <Link to='/signup' style={{ textDecoration: 'none' }}>
-                  Sign up
-                </Link>
-              </Typography>
+            <Box
+              sx={{
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1,
+              }}
+            >
+              <Box>
+                <Typography variant='body2'>
+                  Don&apos;t have an account?{' '}
+                  <Link to='/signup' style={{ textDecoration: 'none' }}>
+                    Sign up
+                  </Link>
+                </Typography>
+              </Box>
+              <Box>
+                <Typography variant='body2'>
+                  <Link
+                    to='/forgot-password'
+                    style={{ textDecoration: 'none' }}
+                  >
+                    Forgot password?
+                  </Link>
+                </Typography>
+              </Box>
             </Box>
           </Box>
         </Paper>

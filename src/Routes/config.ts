@@ -7,6 +7,8 @@ import { ROUTE_PATHS } from './constants'
 // Lazy load all page components
 const Login = lazy(() => import('../pages/Login'))
 const Signup = lazy(() => import('../pages/Signup'))
+const ForgotPassword = lazy(() => import('../pages/ForgotPassword'))
+const ResetPassword = lazy(() => import('../pages/ResetPassword'))
 const Surprise = lazy(() => import('../pages/Surprise'))
 const Dashboard = lazy(() => import('../pages/Dashboard'))
 const Settings = lazy(() => import('../pages/Settings'))
@@ -29,6 +31,20 @@ const guestRoutes: RouteConfig[] = [
     access: 'guest',
     redirectTo: ROUTE_PATHS.memories,
     title: 'Signup',
+  },
+  {
+    path: ROUTE_PATHS.forgotPassword,
+    component: ForgotPassword,
+    access: 'guest',
+    redirectTo: ROUTE_PATHS.memories,
+    title: 'Forgot Password',
+  },
+  {
+    path: ROUTE_PATHS.resetPassword,
+    component: ResetPassword,
+    access: 'guest',
+    redirectTo: ROUTE_PATHS.memories,
+    title: 'Reset Password',
   },
   {
     path: ROUTE_PATHS.root,
