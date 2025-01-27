@@ -51,26 +51,42 @@
    cp example.env .env
 
    # Edit .env with your values:
+    # Frontend
+    VITE_API_BASE_URL=http://localhost:4001
+
+    # Server Configuration
+    DB_PATH=memories.db
+    PORT=4001
+    BASE_URL=http://localhost:4001
+    FRONTEND_URL=http://localhost:5173
+
+    # JWT Configuration
+    JWT_SECRET=your-jwt-secret-key
+
    # Storage Configuration
-   STORAGE_TYPE=local     # Options: local, s3, gcp
+   STORAGE_TYPE=local # Options: local, s3, gcp
 
    # If using local storage:
    LOCAL_STORAGE_PATH=uploads
 
+    # CDN URL Configuration (optional)
+    MEDIA_CDN_URL=http://localhost:4001
+
    # If using AWS S3:
-   AWS_ACCESS_KEY_ID=xxx
-   AWS_SECRET_ACCESS_KEY=xxx
-   AWS_REGION=xxx
-   S3_BUCKET_NAME=xxx
+   AWS_ACCESS_KEY_ID=your-aws-access-key-id
+   AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
+   AWS_REGION=your-aws-region
+   S3_BUCKET_NAME=your-s3-bucket-name
+    S3_MAX_CONTENT_SIZE=104857600 # 100MB in bytes
 
    # If using Google Cloud Storage:
-   GCP_PROJECT_ID=xxx
-   GCP_KEY_FILE=xxx
-   GCP_BUCKET_NAME=xxx
+   GCP_PROJECT_ID=your-project-id
+   GCP_KEY_FILE=path/to/service-account-key.json
+   GCP_BUCKET_NAME=your-bucket-name
 
-   # Email Configuration
-   SENDGRID_API_KEY=xxx
-   FROM_EMAIL=xxx
+   # Email Configuration (SendGrid)
+   SENDGRID_API_KEY=your-sendgrid-api-key
+    FROM_EMAIL=noreply@yourdomain.com
    ```
 
 3. Install dependencies:

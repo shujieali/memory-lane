@@ -58,17 +58,37 @@ module.exports = {
     script: 'server/api.js',
     env: {
       NODE_ENV: 'production',
+
+      // Server Configuration
       PORT: 4001,
-      // Load environment variables from .env file
       DB_PATH: '/var/lib/memory-lane/memories.db',
-      // Add other required environment variables here
+      BASE_URL: 'https://your-api-domain.com',
+      FRONTEND_URL: 'https://your-frontend-domain.com',
+
+      // JWT Configuration
+      JWT_SECRET: 'your-secure-jwt-secret',
+
+      // Storage Configuration
+      STORAGE_TYPE: 'local', // or 's3' or 'gcp'
+      LOCAL_STORAGE_PATH: '/var/lib/memory-lane/uploads',
+
+      // CDN Configuration (if using)
+      MEDIA_CDN_URL: 'https://your-cdn-domain.com',
+
+      // SendGrid Email Configuration
+      SENDGRID_API_KEY: 'your-sendgrid-api-key',
+      FROM_EMAIL: 'noreply@yourdomain.com'
     },
-    // Ensure proper ownership of log files
+
+    // Log files
     error_file: '/var/lib/memory-lane/err.log',
     out_file: '/var/lib/memory-lane/out.log'
   }]
 }
 EOL
+
+# Set secure permissions for ecosystem config
+chmod 600 ecosystem.config.js
 ```
 
 3. Start the application:

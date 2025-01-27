@@ -91,19 +91,10 @@ A web application that allows users to create, manage, and organize their memori
    npm install
    ```
 
-3. Create .env file:
+3. Create .env file
 
-   ```env
-   # Server Configuration
-   PORT=4001
-   JWT_SECRET=your-super-secret-key-change-in-production
-   CORS_ORIGIN=http://localhost:5173
-   BASE_URL=http://localhost:4001
-   FRONTEND_URL=http://localhost:5173
-
-   # Storage Configuration (choose one)
-   STORAGE_TYPE=local  # Options: local, s3, gcp
-   LOCAL_STORAGE_PATH=uploads
+   ```bash
+   cp example.env .env
    ```
 
 4. Start development servers:
@@ -172,31 +163,29 @@ A web application that allows users to create, manage, and organize their memori
 VITE_API_BASE_URL=http://localhost:4001
 
 # Server Configuration
-PORT=4001
-CORS_ORIGIN=http://localhost:5173
-API_BASE_URL=http://localhost:4001
 DB_PATH=memories.db
+PORT=4001
 BASE_URL=http://localhost:4001
 FRONTEND_URL=http://localhost:5173
 
 # JWT Configuration
-JWT_SECRET=your-super-secret-key-change-in-production
+JWT_SECRET=your-jwt-secret-key
 
 # Storage Configuration
-STORAGE_TYPE=s3 # Options: local, s3, gcp
+STORAGE_TYPE=local # Options: local, s3, gcp
 
 # Local Storage Configuration (if STORAGE_TYPE=local)
 LOCAL_STORAGE_PATH=uploads
 
-# CDN URL Configuration
-MEDIA_CDN_URL=your-cdn-url
+# CDN URL Configuration (optional)
+MEDIA_CDN_URL=http://localhost:4001
 
 # AWS S3 Configuration (if STORAGE_TYPE=s3)
 AWS_ACCESS_KEY_ID=your-aws-access-key-id
 AWS_SECRET_ACCESS_KEY=your-aws-secret-access-key
 AWS_REGION=your-aws-region
 S3_BUCKET_NAME=your-s3-bucket-name
-S3_MAX_CONTENT_SIZE=104857600
+S3_MAX_CONTENT_SIZE=104857600 # 100MB in bytes
 
 # Google Cloud Storage Configuration (if STORAGE_TYPE=gcp)
 GCP_PROJECT_ID=your-project-id
@@ -205,7 +194,7 @@ GCP_BUCKET_NAME=your-bucket-name
 
 # Email Configuration
 SENDGRID_API_KEY=your-sendgrid-api-key
-EMAIL_FROM=your-email-from
+FROM_EMAIL=noreply@yourdomain.com
 ```
 
 ### Build Configuration

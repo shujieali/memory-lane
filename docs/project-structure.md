@@ -216,36 +216,45 @@ memory-lane/
 
 ### Environment Variables (.env)
 
+The application uses the following environment variables:
+
 ```
+# Frontend Configuration
+VITE_API_BASE_URL=http://localhost:4001  # Frontend API base URL
+
 # Server Configuration
-PORT=4001                # Server port
-JWT_SECRET=xxx          # JWT signing key
-CORS_ORIGIN=xxx        # Allowed frontend origin
-BASE_URL=xxx           # Backend base URL
-FRONTEND_URL=xxx       # Frontend base URL
+DB_PATH=memories.db      # SQLite database path
+PORT=4001               # Server port
+BASE_URL=http://localhost:4001  # Backend base URL
+FRONTEND_URL=http://localhost:5173  # Frontend URL (for CORS)
+
+# JWT Configuration
+JWT_SECRET=your-jwt-secret-key  # JWT signing secret
 
 # Storage Configuration
-STORAGE_TYPE=local     # Storage provider (local/s3/gcp)
+STORAGE_TYPE=local      # Options: local, s3, gcp
 
-# Local Storage Configuration
-LOCAL_STORAGE_PATH=uploads  # Local storage directory
+# Local Storage (if STORAGE_TYPE=local)
+LOCAL_STORAGE_PATH=uploads  # Upload directory path
+
+# CDN Configuration (optional)
+MEDIA_CDN_URL=http://localhost:4001  # CDN base URL
 
 # AWS S3 Configuration
-AWS_ACCESS_KEY_ID=xxx     # AWS access key
-AWS_SECRET_ACCESS_KEY=xxx # AWS secret key
-AWS_REGION=xxx           # AWS region
-S3_BUCKET_NAME=xxx       # S3 bucket name
-S3_MAX_CONTENT_SIZE=xxx  # Max upload size (bytes)
-MEDIA_CDN_URL=xxx        # Optional CDN URL
+AWS_ACCESS_KEY_ID=your-access-key-id
+AWS_SECRET_ACCESS_KEY=your-secret-access-key
+AWS_REGION=your-aws-region
+S3_BUCKET_NAME=your-s3-bucket-name
+S3_MAX_CONTENT_SIZE=104857600  # 100MB in bytes
 
 # Google Cloud Storage Configuration
-GCP_PROJECT_ID=xxx       # GCP project ID
-GCP_KEY_FILE=xxx        # Service account key file path
-GCP_BUCKET_NAME=xxx     # GCS bucket name
+GCP_PROJECT_ID=your-project-id
+GCP_KEY_FILE=path/to/service-account-key.json
+GCP_BUCKET_NAME=your-bucket-name
 
-# Email Configuration
-SENDGRID_API_KEY=xxx    # SendGrid API key
-FROM_EMAIL=xxx          # Sender email address
+# Email Configuration (SendGrid)
+SENDGRID_API_KEY=your-sendgrid-api-key
+FROM_EMAIL=noreply@yourdomain.com
 ```
 
 ### Development Tools

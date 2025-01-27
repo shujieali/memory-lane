@@ -31,7 +31,6 @@ jobs:
           echo "JWT_SECRET=test-secret" >> $GITHUB_ENV
           echo "STORAGE_TYPE=local" >> $GITHUB_ENV
           echo "LOCAL_STORAGE_PATH=uploads" >> $GITHUB_ENV
-          echo "CORS_ORIGIN=http://localhost:5173" >> $GITHUB_ENV
 
       - name: Lint
         run: npm run lint
