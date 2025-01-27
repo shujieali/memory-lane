@@ -4,6 +4,7 @@ const {
   register,
   login,
   resetPassword,
+  requestPasswordReset,
 } = require('../controllers/authController')
 const { validateRequest } = require('../utils/validation')
 
@@ -173,6 +174,39 @@ router.post(
   ],
   validateRequest,
   resetPassword,
+)
+
+/**
+ * @swagger
+ * /auth/request-reset:
+ *   post:
+ *     summary: Request a password reset
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: Reset email sent if account exists
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Server error
+ */
+router.post(
+  '/request-reset',
+  [body('email').isEmail()],
+  validateRequest,
+  requestPasswordReset,
 )
 
 module.exports = router

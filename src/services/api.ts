@@ -257,7 +257,7 @@ export const api = {
   },
 
   async requestPasswordReset(email: string): Promise<void> {
-    const response = await fetch(`${API_BASE_URL}/email/request-reset`, {
+    const response = await fetch(`${API_BASE_URL}/auth/request-reset`, {
       method: 'POST',
       headers: getHeaders(),
       body: JSON.stringify({ email }),

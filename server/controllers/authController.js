@@ -1,6 +1,11 @@
 const crypto = require('crypto')
 const db = require('../utils/db')
 const { hashPassword, verifyPassword, generateToken } = require('../utils/auth')
+const { sendPasswordResetEmail } = require('./emailController')
+
+const generateResetToken = () => {
+  return crypto.randomBytes(32).toString('hex')
+}
 
 const register = async (req, res) => {
   const { email, password, name } = req.body
@@ -105,8 +110,44 @@ const resetPassword = async (req, res) => {
   }
 }
 
+const requestPasswordReset = async (req, res) => {
+  const { email } = req.body
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' })
+  }
+
+  try {
+    // Check if user exists
+    const user = await db.get('SELECT id FROM users WHERE email = ?', [email])
+
+    if (user) {
+      const resetToken = generateResetToken()
+      const resetExpiry = new Date(Date.now() + 3600000) // 1 hour from now
+
+      await db.run(
+        'UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE email = ?',
+        [resetToken, resetExpiry.toISOString(), email],
+      )
+
+      const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`
+      await sendPasswordResetEmail(email, resetUrl)
+    }
+
+    // Always return success to prevent email enumeration
+    res.status(200).json({
+      message:
+        'If an account exists with that email, you will receive password reset instructions.',
+    })
+  } catch (error) {
+    console.error('Error handling password reset:', error)
+    res.status(500).json({ error: 'Failed to process password reset request' })
+  }
+}
+
 module.exports = {
   register,
   login,
   resetPassword,
+  requestPasswordReset,
 }
