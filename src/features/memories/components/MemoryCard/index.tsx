@@ -42,10 +42,12 @@ export default function MemoryCard({
   onDelete,
   isPublic = false,
   disabled = false,
+  isDetailView = false,
 }: MemoryCardProps) {
   const [isFavorite, setIsFavorite] = useState(is_favorite)
   const [imageLoading, setImageLoading] = useState(true)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isExpanded, setIsExpanded] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -196,33 +198,55 @@ export default function MemoryCard({
         )}
       </Box>
       <CardContent sx={{ flexGrow: 1 }}>
-        <Typography
-          gutterBottom
-          variant='h6'
-          component='div'
-          sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 1,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
-          {title}
-        </Typography>
-        <Typography
-          variant='body2'
-          color='text.secondary'
-          sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            display: '-webkit-box',
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: 'vertical',
-          }}
-        >
-          {description}
-        </Typography>
+        <Box>
+          <Typography
+            variant='h6'
+            component='div'
+            onClick={!isDetailView ? handleClick : undefined}
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: isDetailView && isExpanded ? 'unset' : 1,
+              WebkitBoxOrient: 'vertical',
+              mb: 1,
+              cursor: !isDetailView ? 'pointer' : 'default',
+            }}
+          >
+            {title}
+          </Typography>
+          <Typography
+            variant='body2'
+            color='text.secondary'
+            onClick={!isDetailView ? handleClick : undefined}
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: isDetailView && isExpanded ? 'unset' : 3,
+              WebkitBoxOrient: 'vertical',
+              mb: 1,
+              cursor: !isDetailView ? 'pointer' : 'default',
+            }}
+          >
+            {description}
+          </Typography>
+          {isDetailView && (
+            <Typography
+              onClick={() => setIsExpanded(!isExpanded)}
+              variant='body2'
+              color='primary'
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              {isExpanded ? 'See less' : 'See more'}
+            </Typography>
+          )}
+        </Box>
         {showDates && (
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <CalendarToday

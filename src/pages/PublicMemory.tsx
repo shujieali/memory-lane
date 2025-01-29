@@ -61,7 +61,7 @@ export default function PublicMemory() {
         </IconButton>
       )}
 
-      <MemoryCardPreview memory={memory} />
+      <MemoryCardPreview memory={memory} isDetailView={true} />
     </Fragment>
   )
 }

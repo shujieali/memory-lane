@@ -14,6 +14,8 @@ import LocalOffer from '@mui/icons-material/LocalOffer'
 import CloseIcon from '@mui/icons-material/Close'
 import type { Memory } from '../../../../types/memory'
 import { useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { getRoutePathWithParams } from '../../../../Routes/utils'
 
 const modalStyle = {
   position: 'absolute',
@@ -28,8 +30,29 @@ const modalStyle = {
   borderRadius: 2,
 }
 
-export default function MemoryCardPreview({ memory }: { memory: Memory }) {
+interface MemoryCardPreviewProps {
+  memory: Memory
+  isDetailView?: boolean
+}
+
+export default function MemoryCardPreview({
+  memory,
+  isDetailView = false,
+}: MemoryCardPreviewProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const handleClick = () => {
+    const memoryRoute = memory.public_id ? 'publicMemory' : 'memoryDetail'
+    const routeParams = memory.public_id
+      ? { public_id: memory.public_id }
+      : { id: memory.id }
+    navigate(getRoutePathWithParams(memoryRoute, routeParams), {
+      state: { from: location.pathname },
+    })
+  }
 
   const handleImageClick = (url: string) => {
     setSelectedImage(url)
@@ -58,13 +81,15 @@ export default function MemoryCardPreview({ memory }: { memory: Memory }) {
             <Typography
               variant='h5'
               component='h2'
+              onClick={!isDetailView ? handleClick : undefined}
               sx={{
                 flex: 1,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 display: '-webkit-box',
-                WebkitLineClamp: 1,
+                WebkitLineClamp: isDetailView && isExpanded ? 'unset' : 1,
                 WebkitBoxOrient: 'vertical',
+                cursor: !isDetailView ? 'pointer' : 'default',
               }}
             >
               {memory.title}
@@ -91,17 +116,37 @@ export default function MemoryCardPreview({ memory }: { memory: Memory }) {
           {/* Description */}
           <Typography
             variant='body1'
+            onClick={!isDetailView ? handleClick : undefined}
             sx={{
-              mb: 2,
+              mb: 1,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               display: '-webkit-box',
-              WebkitLineClamp: 3,
+              WebkitLineClamp: isDetailView && isExpanded ? 'unset' : 3,
               WebkitBoxOrient: 'vertical',
+              cursor: !isDetailView ? 'pointer' : 'default',
             }}
           >
             {memory.description}
           </Typography>
+
+          {/* See more/less button */}
+          {isDetailView && (
+            <Typography
+              onClick={() => setIsExpanded(!isExpanded)}
+              variant='body2'
+              color='primary'
+              sx={{
+                cursor: 'pointer',
+                mb: 2,
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              {isExpanded ? 'See less' : 'See more'}
+            </Typography>
+          )}
 
           {/* Tags */}
           {memory.tags && memory.tags.length > 0 && (

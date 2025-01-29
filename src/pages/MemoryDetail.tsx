@@ -41,7 +41,7 @@ export default function MemoryDetail() {
       <IconButton onClick={() => navigate(-1)} sx={{ mb: 2 }}>
         <ArrowBackIcon />
       </IconButton>
-      <MemoryCardPreview memory={memory} />
+      <MemoryCardPreview memory={memory} isDetailView={true} />
     </Box>
   )
 }
