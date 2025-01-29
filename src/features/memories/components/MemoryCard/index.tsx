@@ -196,7 +196,18 @@ export default function MemoryCard({
         )}
       </Box>
       <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant='h6' component='div'>
+        <Typography
+          gutterBottom
+          variant='h6'
+          component='div'
+          sx={{
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: '-webkit-box',
+            WebkitLineClamp: 1,
+            WebkitBoxOrient: 'vertical',
+          }}
+        >
           {title}
         </Typography>
         <Typography

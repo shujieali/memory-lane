@@ -55,7 +55,18 @@ export default function MemoryCardPreview({ memory }: { memory: Memory }) {
         <Box sx={{ mb: 3 }}>
           {/* Title and Favorite */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <Typography variant='h5' component='h2' sx={{ flex: 1 }}>
+            <Typography
+              variant='h5'
+              component='h2'
+              sx={{
+                flex: 1,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: 'vertical',
+              }}
+            >
               {memory.title}
             </Typography>
             {memory.is_favorite ? (
@@ -78,7 +89,17 @@ export default function MemoryCardPreview({ memory }: { memory: Memory }) {
           </Box>
 
           {/* Description */}
-          <Typography variant='body1' sx={{ mb: 2 }}>
+          <Typography
+            variant='body1'
+            sx={{
+              mb: 2,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+            }}
+          >
             {memory.description}
           </Typography>
 
