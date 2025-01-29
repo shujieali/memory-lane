@@ -5,5 +5,4 @@ export interface MemoryCardProps extends Omit<Memory, 'user_id'> {
   onDelete?: (id: string) => void
   isPublic?: boolean
   disabled?: boolean
-  isDetailView?: boolean
 }

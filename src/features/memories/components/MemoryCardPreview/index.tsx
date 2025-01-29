@@ -13,7 +13,7 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday'
 import LocalOffer from '@mui/icons-material/LocalOffer'
 import CloseIcon from '@mui/icons-material/Close'
 import type { Memory } from '../../../../types/memory'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { getRoutePathWithParams } from '../../../../Routes/utils'
 
@@ -41,6 +41,35 @@ export default function MemoryCardPreview({
 }: MemoryCardPreviewProps) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isTitleTruncated, setIsTitleTruncated] = useState(false)
+  const [isDescriptionTruncated, setIsDescriptionTruncated] = useState(false)
+  const titleRef = useRef<HTMLHeadingElement>(null)
+  const descriptionRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const checkTruncation = () => {
+      // Add small timeout to ensure content is rendered
+      setTimeout(() => {
+        if (titleRef.current) {
+          const titleHeight = titleRef.current.scrollHeight
+          const titleVisible = titleRef.current.clientHeight
+          setIsTitleTruncated(titleHeight > titleVisible)
+        }
+        if (descriptionRef.current) {
+          const descHeight = descriptionRef.current.scrollHeight
+          const descVisible = descriptionRef.current.clientHeight
+          setIsDescriptionTruncated(descHeight > descVisible)
+        }
+      }, 100)
+    }
+
+    checkTruncation()
+    window.addEventListener('resize', checkTruncation)
+
+    return () => {
+      window.removeEventListener('resize', checkTruncation)
+    }
+  }, [memory.title, memory.description, isExpanded, isDetailView])
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -79,16 +108,17 @@ export default function MemoryCardPreview({
           {/* Title and Favorite */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
             <Typography
+              ref={titleRef}
               variant='h5'
               component='h2'
               onClick={!isDetailView ? handleClick : undefined}
               sx={{
                 flex: 1,
+                display: '-webkit-box',
+                WebkitBoxOrient: 'vertical',
+                WebkitLineClamp: isDetailView && isExpanded ? 'unset' : 1,
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: isDetailView && isExpanded ? 'unset' : 1,
-                WebkitBoxOrient: 'vertical',
                 cursor: !isDetailView ? 'pointer' : 'default',
               }}
             >
@@ -115,15 +145,16 @@ export default function MemoryCardPreview({
 
           {/* Description */}
           <Typography
+            ref={descriptionRef}
             variant='body1'
             onClick={!isDetailView ? handleClick : undefined}
             sx={{
               mb: 1,
+              display: '-webkit-box',
+              WebkitBoxOrient: 'vertical',
+              WebkitLineClamp: isDetailView && isExpanded ? 'unset' : 3,
               overflow: 'hidden',
               textOverflow: 'ellipsis',
-              display: '-webkit-box',
-              WebkitLineClamp: isDetailView && isExpanded ? 'unset' : 3,
-              WebkitBoxOrient: 'vertical',
               cursor: !isDetailView ? 'pointer' : 'default',
             }}
           >
@@ -131,22 +162,24 @@ export default function MemoryCardPreview({
           </Typography>
 
           {/* See more/less button */}
-          {isDetailView && (
-            <Typography
-              onClick={() => setIsExpanded(!isExpanded)}
-              variant='body2'
-              color='primary'
-              sx={{
-                cursor: 'pointer',
-                mb: 2,
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
-              }}
-            >
-              {isExpanded ? 'See less' : 'See more'}
-            </Typography>
-          )}
+          {isDetailView &&
+            (((isTitleTruncated || isDescriptionTruncated) && !isExpanded) ||
+              isExpanded) && (
+              <Typography
+                onClick={() => setIsExpanded(!isExpanded)}
+                variant='body2'
+                color='primary'
+                sx={{
+                  cursor: 'pointer',
+                  mb: 2,
+                  '&:hover': {
+                    textDecoration: 'underline',
+                  },
+                }}
+              >
+                {isExpanded ? 'See less' : 'See more'}
+              </Typography>
+            )}
 
           {/* Tags */}
           {memory.tags && memory.tags.length > 0 && (
