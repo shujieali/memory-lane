@@ -1,23 +1,40 @@
-import { CubeIcon } from '@heroicons/react/20/solid'
-import './App.css'
+import { BrowserRouter } from 'react-router-dom'
+import { ThemeProvider, CssBaseline } from '@mui/material'
+import { SnackbarProvider } from 'notistack'
+import { AuthProvider } from './context/AuthContext'
+import { SettingsProvider } from './context/SettingsContext'
+import { ShareProvider } from './context/shareContext'
+import { useSettings, useOfflineDetection } from './hooks'
+import { createAppTheme } from './theme/theme'
+import Routes from './Routes/AppRoutes'
 
-function App() {
+const AppWithSettings = () => {
+  const { settings } = useSettings()
+  const theme = createAppTheme(settings.theme.mode || 'light')
+  // Initialize offline detection
+  useOfflineDetection()
   return (
-    <div>
-      <div className='mx-auto max-w-7xl sm:px-6 lg:px-8 mt-32'>
-        <div className='overflow-hidden rounded-lg bg-white shadow h-96'>
-          <div className='px-4 py-5 sm:p-6'>
-            <div className='flex items-center'>
-              <CubeIcon className='h-16 w-16 inline-block' />
-              <h1 className='text-4xl font-semibold text-gray-900 mb-4 ml-4 mt-4'>
-                Memory lane
-              </h1>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <SnackbarProvider maxSnack={3}>
+        <ShareProvider>
+          <Routes />
+        </ShareProvider>
+      </SnackbarProvider>
+    </ThemeProvider>
   )
 }
 
-export default App
+const MemoryLane = () => {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <SettingsProvider>
+          <AppWithSettings />
+        </SettingsProvider>
+      </AuthProvider>
+    </BrowserRouter>
+  )
+}
+
+export default MemoryLane

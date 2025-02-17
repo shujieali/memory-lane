@@ -1,3 +1,4 @@
+.env*
 # Logs
 logs
 *.log
@@ -25,3 +26,13 @@ dist-ssr
 
 *.db
 *.sqlite
+
+# playwright
+playwright-report/
+test-results/
+
+# local uploads
+uploads/
+
+key*
+keys/
